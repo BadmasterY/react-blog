@@ -35,8 +35,14 @@ const Comments = createModel('comments', {
     avatar: String,
 });
 
+const Settings = createModel('settings', {
+    isUseRegister: Boolean,
+    updateUserId: Schema.Types.ObjectId,
+});
+
 export {
     Users,
     Articles,
     Comments,
+    Settings,
 }

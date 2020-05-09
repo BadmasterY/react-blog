@@ -2,6 +2,7 @@ import Router from 'koa-router';
 import Users from './user';
 import Article from './article';
 import Comment from './comment';
+import Setting from './setting';
 
 const router = new Router();
 
@@ -12,6 +13,7 @@ router.get('/', ctx => {
 router.use('/user', Users);
 router.use('/article', Article);
 router.use('/comment', Comment);
+router.use('/system', Setting);
 
 // TODO: 更优雅的路由
 router.get('/*', ctx => {
