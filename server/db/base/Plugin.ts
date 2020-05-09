@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { Dao } from './Dao'
-import { Users, Settings } from '../../interfaces/models';
+import { Groups } from '../../interfaces/models';
 import { md5 } from '../../utils/md5';
 
 import config from 'config';
@@ -23,23 +23,41 @@ function toObjectId(str: string | number) {
  * 用于创建初始账号/配置
  * @param users 用户实例
  */
-async function onConectedFn(users: Dao, settings: Dao) {
-    const userResult = (await users.findAll() as Users[]);
-    const settingResult = (await settings.findAll() as Settings[]);
+async function onConectedFn(users: Dao, settings: Dao, groups: Dao) {
+    const userResult = await users.findAll();
+    const settingResult = await settings.findAll();
+    const groupResult = await groups.findAll();
+
+    if (groupResult.length === 0) {
+        await groups.save({
+            name: '管理员',
+            removed: 0,
+            useState: 0,
+        });
+
+        await groups.save({
+            name: '游客',
+            removed: 0,
+            useState: 1,
+        });
+    }
 
     if (userResult.length === 0) {
         const {
             username,
             password,
+            position,
         } = initConfig;
 
-        await users.save(Object.assign({}, initConfig, { password: md5(password) }));
+        const { _id } = await groups.findOne({ name: position });
+
+        await users.save(Object.assign({}, initConfig, { password: md5(password), position: _id }));
 
         console.log(`[DB] Init username: ${username}`);
         console.log(`[DB] Init password: ${password}`);
     }
 
-    if(settingResult.length === 0) {
+    if (settingResult.length === 0) {
         const {
             isUseRegister,
         } = settingConfig;

@@ -40,9 +40,16 @@ const Settings = createModel('settings', {
     updateUserId: Schema.Types.ObjectId,
 });
 
+const Groups = createModel('groups', {
+    name: String,
+    removed: Number,
+    useState: Number, // 账号创建/修改时无法变更为未启用的组
+});
+
 export {
     Users,
     Articles,
     Comments,
     Settings,
+    Groups,
 }

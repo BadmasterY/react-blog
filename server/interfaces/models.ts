@@ -40,9 +40,16 @@ interface Settings extends modelBase {
     updateUserId?: Schema.Types.ObjectId;
 }
 
+interface Groups extends modelBase {
+    name: string;
+    removed: string;
+    useState: string;
+}
+
 export {
     Users,
     Articles,
     Comments,
     Settings,
+    Groups,
 }
