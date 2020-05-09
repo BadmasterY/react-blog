@@ -124,7 +124,7 @@ class Dao{
      * @param {Object} doc 可选, 更新内容, 默认 {}
      * @param {Object} options 可选, 选项, 默认 {}
      */
-    updateOne(filter = {}, doc = {}, options = {}): Promise<any> {
+    updateOne(filter = {}, doc = {}, options = {}): Promise<{ok: number}> {
         return new Promise((resolve, reject) => {
             // 使用 updateOne 进行更新
             // 详情: https://mongoosejs.com/docs/api/model.html#model_Model.updateOne

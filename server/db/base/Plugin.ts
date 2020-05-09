@@ -1,13 +1,14 @@
 import mongoose from 'mongoose';
 import { Dao } from './Dao'
-import { Users } from '../../interfaces/models';
+import { Users, Settings } from '../../interfaces/models';
 import { md5 } from '../../utils/md5';
 
 import config from 'config';
 
-import { InitDB } from '../../interfaces/config';
+import { InitDB, Setting } from '../../interfaces/config';
 
 const initConfig: InitDB = config.get('initDB');
+const settingConfig: Setting = config.get('systemSetting');
 
 /**
  * 转换为 objectId
@@ -19,12 +20,14 @@ function toObjectId(str: string | number) {
 
 /**
  * 初始化连接方法  
- * 用于创建初始账号
+ * 用于创建初始账号/配置
  * @param users 用户实例
  */
-async function onConectedFn(users: Dao) {
-    const result = (await users.findAll() as Users[]);
-    if (result.length === 0) {
+async function onConectedFn(users: Dao, settings: Dao) {
+    const userResult = (await users.findAll() as Users[]);
+    const settingResult = (await settings.findAll() as Settings[]);
+
+    if (userResult.length === 0) {
         const {
             username,
             password,
@@ -34,6 +37,16 @@ async function onConectedFn(users: Dao) {
 
         console.log(`[DB] Init username: ${username}`);
         console.log(`[DB] Init password: ${password}`);
+    }
+
+    if(settingResult.length === 0) {
+        const {
+            isUseRegister,
+        } = settingConfig;
+
+        await settings.save({ isUseRegister });
+
+        console.log(`[DB] Init setting config...`, settingConfig);
     }
 }
 

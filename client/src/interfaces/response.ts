@@ -119,6 +119,13 @@ interface GetUserInfoResult extends BaseResponse {
     }
 }
 
+interface GetSettingResult extends BaseResponse {
+    content?: {
+        id: string;
+        isUseRegister: boolean;
+    }
+}
+
 export type Response = BaseResponse;
 export type UserRes = UserResponse;
 export type UserList = UserListResponse;
@@ -132,3 +139,4 @@ export type Comments = CommentsItem;
 export type CommentsRes = CommentsResponse;
 export type UserInfoResult = GetUserInfoResult;
 export type UserUploadAvatarRes = UserUploadAvatarResponse;
+export type SettingResult = GetSettingResult;

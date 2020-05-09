@@ -49,5 +49,8 @@
     },
     "avatar": {
         "dirName": "avatars"
+    },
+    "systemSetting": {
+        "isUseRegister": true
     }
 }

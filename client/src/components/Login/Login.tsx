@@ -17,31 +17,39 @@ import './login.css';
 
 const { useVideo, useBackground, noBackground, randomBackgroundSize } = login;
 const num = Math.floor(Math.random() * randomBackgroundSize);
+let initFormValue: { username?: string, password?: string } = {};
 
 function Login() {
+    const localItem = localStorage.getItem(localName);
+
     const { isLogin } = useSelector((state: reduxState) => state.user);
     const [autoLogin, setAutoLogin] = useState(false);
     const [isLogging, setLoging] = useState(false);
-    const [loginSuccess, setLoginSuccess] = useState(false);
     const [showRegister, setRegister] = useState(false);
     const [form] = Form.useForm();
     const history = useHistory();
     const dispatch = useDispatch();
 
+    if (localItem !== null) {
+        const loginData: LoginData = JSON.parse(localItem);
+        const { username, password } = loginData;
+
+        initFormValue = { username, password };
+    }
+
     useEffect(() => {
+        function isAutoLogin() {
+            setAutoLogin(true);
+        }
+
         if (isLogin) {
-            console.log('go back')
             history.goBack();
         } else {
-            const localItem = localStorage.getItem(localName);
             if (localItem !== null) {
                 const loginData: LoginData = JSON.parse(localItem);
-                const { username, password, isLogin: localIsLogin } = loginData;
-                if(!isLogging && !loginSuccess) {
-                    form.setFieldsValue({ username, password });
-                }
+                const { isLogin: localIsLogin } = loginData;
                 if (localIsLogin && !autoLogin) {
-                    setAutoLogin(true);
+                    isAutoLogin();
                     login();
                 }
             }
@@ -63,14 +71,14 @@ function Login() {
                     return;
                 }
 
-                setLoginSuccess(true);
                 setLoging(false);
                 message.success('Login success!');
-                // localStorage.setItem(localName, JSON.stringify({
-                //     username,
-                //     password,
-                //     isLogin: true,
-                // }));
+                // todo: 加密重新保存, 造成泄漏
+                localStorage.setItem(localName, JSON.stringify({
+                    username,
+                    password,
+                    isLogin: true,
+                }));
                 if (typeof data.content === 'object') {
                     const payload: Payload = Object.assign({}, data.content, { isLogin: true });
                     const action: Action = actions.userLogin(payload);
@@ -122,6 +130,7 @@ function Login() {
                 hideRequiredMark={true}
                 labelCol={{ span: 5 }}
                 wrapperCol={{ span: 19 }}
+                initialValues={initFormValue}
                 form={form}
             >
                 <h2>

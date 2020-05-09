@@ -35,8 +35,14 @@ interface Comments extends modelBase {
     avatar: string;
 }
 
+interface Settings extends modelBase {
+    isUseRegister: boolean;
+    updateUserId?: Schema.Types.ObjectId;
+}
+
 export {
     Users,
     Articles,
     Comments,
+    Settings,
 }

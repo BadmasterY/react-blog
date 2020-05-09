@@ -76,6 +76,13 @@ interface Avatar {
     dirName: string;
 }
 
+/**
+ * 站点配置
+ */
+interface SystemSetting {
+    isUseRegister: boolean;
+}
+
 export {
     Http,
     Server,
@@ -83,4 +90,5 @@ export {
     DB,
     configSchema,
     Avatar,
+    SystemSetting as Setting,
 }
