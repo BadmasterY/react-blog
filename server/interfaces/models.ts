@@ -42,8 +42,8 @@ interface Settings extends modelBase {
 
 interface Groups extends modelBase {
     name: string;
-    removed: string;
-    useState: string;
+    removed: number;
+    useState: number;
 }
 
 export {

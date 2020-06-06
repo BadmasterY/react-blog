@@ -9,6 +9,7 @@ import Articles from './Articles/Articles';
 import Comments from './Comments/Comments';
 import Users from './Users/Users';
 import Footer from './Footer/Footer';
+import Groups from './Groups/Groups';
 import Setting from './Setting/Setting';
 
 import { reduxState } from '../../interfaces/state';
@@ -27,7 +28,7 @@ function System() {
     useEffect(() => {
         if (!isLogin) {
             history.push('/login');
-        }else if (position !== '管理员') {
+        } else if (position !== '管理员') {
             history.push('/');
         }
     });
@@ -56,6 +57,10 @@ function System() {
                                 {
                                     selectItem === 'users' ?
                                         <Users /> : ''
+                                }
+                                {
+                                    selectItem === 'groups' ?
+                                        <Groups /> : ''
                                 }
                                 {
                                     selectItem === 'setting' ?
