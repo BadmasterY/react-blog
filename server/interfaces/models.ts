@@ -1,4 +1,4 @@
-import { Schema } from 'mongoose';
+import mongoose, { Schema } from 'mongoose';
 
 interface modelBase {
     id?: string;
@@ -14,7 +14,7 @@ interface Users extends modelBase {
     nickname: string;
     username: string;
     password: string;
-    position: string;
+    position: mongoose.Types.ObjectId;
     removed: number;
     useState: number;
 }
@@ -42,8 +42,8 @@ interface Settings extends modelBase {
 
 interface Groups extends modelBase {
     name: string;
-    removed: string;
-    useState: string;
+    removed: number;
+    useState: number;
 }
 
 export {

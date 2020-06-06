@@ -39,6 +39,7 @@ function Setting() {
             if (content) {
                 const action = actions.settingGet(content);
                 dispatch(action);
+                setSelected(content.isUseRegister);
             }
         }).catch(err => {
             message.error('Please check network!');

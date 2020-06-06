@@ -4,11 +4,12 @@ import path from 'path';
 import config from 'config';
 import { v4 as uuid4 } from 'uuid';
 
-import { users, articles, comments } from '../db';
+import { users, articles, comments, groups } from '../db';
+import { toObjectId } from '../db/base/Plugin';
 
 import { getDate, dataType, mkdirsSync, delDirSync } from '../utils/util';
 import { Response } from '../interfaces/response';
-import { Users } from '../interfaces/models';
+import { Users, Groups } from '../interfaces/models';
 import { Avatar } from '../interfaces/config'
 import {
     List as UserList,
@@ -19,6 +20,7 @@ import {
     UpdateRequest,
     UserInfoRequest,
     UserUploadAvatar,
+    UserDataResult,
 } from '../interfaces/users';
 
 
@@ -32,33 +34,40 @@ router.post('/login', async (ctx, next) => {
     console.log(`[User] ${getDate()} login ${username}`);
 
     const response: Response = { error: 1 };
-    await users.findOne({ username }).then(result => {
-        if (result) {
-            if (typeof result == 'object') {
-                const { _id, url, bio, nickname, username, avatarUrl, position, useState, removed } = (result as Users);
-                if (useState === 1 && removed === 0) {
-                    if ((result as Users).password === password) {
-                        response.error = 0;
-                        response.content = {
-                            id: _id,
-                            url,
-                            bio,
-                            avatarUrl,
-                            nickname,
-                            username,
-                            position,
-                        };
-                    } else {
-                        response.msg = '密码错误!';
-                        console.log(`[User] ${getDate()} login error:`, response.msg);
-                    }
-                } else {
-                    response.msg = removed === 1 ? '当前用户不存在!' : '当前账户未启用!';
-                    console.log(`[User] ${getDate()} login error:`, response.msg);
-                }
+    await users.aggregate([
+        {
+            $match: { removed: 0, username },
+        },
+        {
+            $lookup: {
+                from: "groups",
+                localField: "position",
+                foreignField: "_id",
+                as: "position",
+            }
+        },
+    ]).then((result: UserDataResult[]) => {
+        if (result.length > 0) {
+            const userData = result[0];
+            if (userData.password === password) {
+                const { _id, url, bio, nickname, username, avatarUrl, position } = userData;
+                response.error = 0;
+                response.content = {
+                    id: _id,
+                    url,
+                    bio,
+                    avatarUrl,
+                    nickname,
+                    username,
+                    position: position[0]?.name,
+                };
+            } else {
+                response.msg = '密码错误!';
+                console.log(`[User] ${getDate()} login error:`, response.msg);
             }
         } else {
             response.msg = '当前用户不存在!';
+            console.log(`[User] ${getDate()} login error:`, response.msg);
         }
     }).catch(err => {
         console.log(`[User] ${getDate()} login error:`, err);
@@ -101,11 +110,12 @@ router.post('/update', async (ctx, next) => {
 router.post('/register', async (ctx, next) => {
     const register: Register = ctx.request.body;
     const { username } = register;
+    const position = (await groups.findOne({ name: '游客' })) as Groups;
     const user: Users = Object.assign({
         url: '',
         bio: '',
         avatarUrl: '',
-        position: '用户',
+        position: toObjectId(position?._id),
         removed: 0,
         useState: 1,
     }, register);
@@ -192,30 +202,37 @@ router.post('/getUserList', async (ctx, next) => {
             maxLength: (allResult as Users[]).length,
         }
 
-        await users.findAll({ removed: 0, ...query }, null, { skip: skipSize, limit: pageSize }).then(result => {
-            if (result !== undefined && result !== null) {
-                const temp: UserList[] = [];
-                const res = (result as Users[]);
-                for (let i = 0; i < res.length; i++) {
-                    const item: UserList = {
-                        id: res[i]._id,
-                        nickname: res[i].nickname,
-                        username: res[i].username,
-                        position: res[i].position,
-                        useState: res[i].useState,
-                    };
-
-                    temp.push(item);
+        await users.aggregate([
+            { $match: { removed: 0, ...query }, },
+            { $skip: skipSize },
+            { $limit: pageSize },
+            {
+                $lookup: {
+                    from: "groups",
+                    localField: "position",
+                    foreignField: "_id",
+                    as: "position",
                 }
-                response.error = 0;
-                response.content = {
-                    users: temp,
-                    ...response.content,
+            },
+        ]).then((result: UserDataResult[]) => {
+            const temp: UserList[] = [];
+            for (let i = 0; i < result.length; i++) {
+                const { _id, nickname, username, position, useState } = result[i];
+                const item: UserList = {
+                    id: _id,
+                    nickname,
+                    username,
+                    position: position[0]?.name,
+                    useState,
                 };
-            } else {
-                response.msg = '未找到相关数据!';
-                console.log(`[User] ${getDate()} login error:`, response.msg);
+                temp.push(item);
             }
+
+            response.error = 0;
+            response.content = {
+                users: temp,
+                ...response.content,
+            };
         }).catch(err => {
             response.msg = '查询失败! 请重试!';
             console.log(`[User] getUserList error:`, err);

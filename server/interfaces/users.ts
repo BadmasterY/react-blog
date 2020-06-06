@@ -1,4 +1,4 @@
-import { Users } from './models';
+import { Users, Groups } from './models';
 
 interface UserList {
     id?: string;
@@ -6,6 +6,22 @@ interface UserList {
     username?: string;
     position?: string;
     useState?: number;
+}
+
+interface UserDataResult {
+    id?: string;
+    _id?: string;
+    createTime?: string;
+    updatedAt?: string;
+    url: string;
+    bio: string;
+    avatarUrl: string;
+    nickname: string;
+    username: string;
+    password: string;
+    removed: number;
+    useState: number;
+    position: Groups[],
 }
 
 interface GetUsersRequest {
@@ -48,9 +64,10 @@ export {
     UserList as List,
     GetUsersRequest as GetRequest,
     DeleteUserRequest as DeleteRequest,
-    UpdateUserRequest as  UpdateRequest,
+    UpdateUserRequest as UpdateRequest,
     RegisterUserRequest as RegisterRequest,
     ResetpassUserRequest as ResetpassRequest,
     UserInfoRequest,
     UserUploadAvatar,
+    UserDataResult,
 }

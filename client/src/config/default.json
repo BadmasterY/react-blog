@@ -41,6 +41,10 @@
                 "name": "Users"
             },
             {
+                "key": "groups",
+                "name": "Groups"
+            },
+            {
                 "key": "setting",
                 "name": "Setting"
             }
@@ -57,6 +61,11 @@
                 "title": "NickName",
                 "dataIndex": "nickname",
                 "key": "nickname"
+            },
+            "name": {
+                "title": "Name",
+                "dataIndex": "name",
+                "key": "name"
             },
             "position": {
                 "title": "Position",
