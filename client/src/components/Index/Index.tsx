@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Layout, BackTop } from 'antd';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Route, Switch, useHistory } from 'react-router-dom';
 
 import MyHeader from '../Header/Header';
@@ -14,18 +14,31 @@ import User from '../User/User';
 import Setting from '../Setting/Setting';
 import System from '../ManagementSystem/Index';
 import Article from '../Article/Article';
+import Loading from '../Loading/Loading';
 
 import { reduxState } from '../../interfaces/state';
 import { Data as LoginData } from '../../interfaces/localstorage';
 import { localName } from '../../config/default.json';
 
+import { actions } from '../../redux/ducks/system';
+
 import './index.css';
 
 const { Content } = Layout;
 
+
 function App() {
   const { isLogin } = useSelector((item: reduxState) => item.user);
+  const { isLoading } = useSelector((item: reduxState) => item.system);
   const history = useHistory();
+  const dispatch = useDispatch();
+
+  document.onreadystatechange = function () {
+    if(document.readyState === 'complete') {
+      const action = actions.systemLoaded();
+      dispatch(action);
+    }
+  }
 
   useEffect(() => {
     if (!isLogin) {
@@ -40,6 +53,8 @@ function App() {
   });
 
   return (
+    <>
+      <Loading style={{ opacity: isLoading ? 1 : 0 }} />
       <Switch>
         <Route exact strict path={['/', '/about', '/user', '/setting', '/article/*']}>
           <Layout className="index">
@@ -62,6 +77,7 @@ function App() {
         <Route exact strict path="/system" children={props => Animation(<System />, props, '/system')} />
         <Route path="*" children={props => Animation(<NotFound />, props, '/404')} />
       </Switch>
+    </>
   );
 }
 
