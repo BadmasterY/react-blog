@@ -23,6 +23,7 @@ function Login() {
     const localItem = localStorage.getItem(localName);
 
     const { isLogin } = useSelector((state: reduxState) => state.user);
+    const [isBack, setBack] = useState(false);
     const [autoLogin, setAutoLogin] = useState(false);
     const [isLogging, setLoging] = useState(false);
     const [showRegister, setRegister] = useState(false);
@@ -42,8 +43,9 @@ function Login() {
             setAutoLogin(true);
         }
 
-        if (isLogin) {
+        if (isLogin && !isBack) {
             history.goBack();
+            setBack(true);
         } else {
             if (localItem !== null) {
                 const loginData: LoginData = JSON.parse(localItem);
