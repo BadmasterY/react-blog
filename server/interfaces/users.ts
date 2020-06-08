@@ -60,6 +60,13 @@ interface UserUploadAvatar {
     filename: string;
 }
 
+interface AddUserRequest {
+    username: string;
+    password: string;
+    position: string;
+    useState: number;
+}
+
 export {
     UserList as List,
     GetUsersRequest as GetRequest,
@@ -70,4 +77,5 @@ export {
     UserInfoRequest,
     UserUploadAvatar,
     UserDataResult,
+    AddUserRequest,
 }

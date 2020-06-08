@@ -4,8 +4,8 @@ import axios from 'axios';
 
 import { system } from '../../../config/default.json';
 import { showDeleteFn } from '../Delete/Delete';
-import { GroupItem, GroupList, Response } from '../../../interfaces/response';
-import Add from '../Add/Add';
+import { GroupItem, Groups as GroupsList, Response } from '../../../interfaces/response';
+import Add from '../Add/AddGroup';
 
 import './groups.css';
 import { FormInstance } from 'antd/lib/form';
@@ -84,7 +84,7 @@ function Groups() {
             pageSize,
             query,
         }).then(result => {
-            const data: GroupList = result.data;
+            const data: GroupsList = result.data;
             const { error, msg, content } = data;
 
             setLoadding(false);

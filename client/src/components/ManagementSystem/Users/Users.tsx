@@ -1,12 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Table, message, Row, Col, Button, Form, Input } from 'antd';
+import { FormInstance } from 'antd/lib/form';
 import axios from 'axios';
 
-import { showDeleteFn } from '../Delete/Delete';
-import { UserList, ListContent, UserRes } from '../../../interfaces/response';
+import { UserList, ListContent, UserRes, Response } from '../../../interfaces/response';
+import { AddUserForm } from '../../../interfaces/adds';
+
 import { system } from '../../../config/default.json';
 
+import { showDeleteFn } from '../Delete/Delete';
+import Add from '../Add/AddUser';
+
+import { md5 } from '../../../utils/md5';
+
 import './users.css';
+
+const INIT_PASSWORD = '123456';
 
 const { initialPageSize, columns } = system;
 const initialData: any[] = [];
@@ -16,11 +25,12 @@ function Users() {
     const [total, setTotal] = useState(0);
     const [firstLoad, setFirstLoad] = useState(true);
     const [isLoading, setLoading] = useState(true);
+    const [showAddBox, setShowBox] = useState(false);
     const [initialPage, setPage] = useState(1);
     const [form] = Form.useForm();
 
     async function loadUserList(page: number, pageSize: number, query = {}) {
-        if(firstLoad) setFirstLoad(false);
+        if (firstLoad) setFirstLoad(false);
         setLoading(true);
         await axios.post('/user/getUserList', {
             page,
@@ -101,24 +111,26 @@ function Users() {
 
         const newState = useState === 1 ? 0 : 1;
         await axios.post(
-            '/user/updateUser', 
-            {id, updateUserData: {
-                useState: newState,
-            }}
+            '/user/updateUser',
+            {
+                id, updateUserData: {
+                    useState: newState,
+                }
+            }
         ).then(result => {
             const data: UserRes = result.data;
             const { error, msg } = data;
 
             setLoading(false);
 
-            if(error === 1) {
+            if (error === 1) {
                 message.error(msg);
                 return;
             }
 
             message.success('Updated!');
             dataSource.map((item) => {
-                if(item === record) {
+                if (item === record) {
                     item.useState = newState;
                 }
                 return null;
@@ -133,7 +145,6 @@ function Users() {
     }
 
     async function clearSearch() {
-        console.log(form);
         form.resetFields();
         await loadUserList(initialPage, initialPageSize);
     }
@@ -141,6 +152,51 @@ function Users() {
     function pageChange(page: number, pageSize?: number) {
         setPage(page);
         if (pageSize) loadUserList(page, pageSize);
+    }
+
+    function showAdd() {
+        setShowBox(true);
+    }
+
+    function hiddenAdd() {
+        setShowBox(false);
+    }
+
+    async function addNewUser(form: FormInstance, onEnd = () => { }, onError = () => { }) {
+        await form.validateFields().then(async result => {
+            let { name, position } = (result as AddUserForm);
+            let password = md5(INIT_PASSWORD);
+
+            await axios.post('/user/addUser', {
+                username: name,
+                password,
+                position,
+                useState: 1,
+            }).then(result => {
+                const data: Response = result.data;
+                const { error, msg } = data;
+
+                onEnd();
+
+                if (error === 1) {
+                    message.error(msg);
+                    return;
+                }
+
+                message.success('Added!');
+                hiddenAdd();
+                console.log('ok!');
+                loadUserList(initialPage, initialPageSize);
+            }).catch(err => {
+                onError();
+                console.error(err);
+                message.error('Please check network!');
+            });
+        }).catch(err => {
+            onError();
+            message.error('Please check input!');
+            console.error(err);
+        })
     }
 
     useEffect(() => {
@@ -170,21 +226,21 @@ function Users() {
             render: (text: ListContent, record: ListContent) => {
                 return (<Row gutter={[6, 6]}>
                     <Col xs={24} sm={12}>
-                        <Button 
+                        <Button
                             block
                             onClick={() => {
                                 changeState(record);
                             }}
                         >{
                                 record.useState === 1 ? 'Forbidden' : 'Enable'
-                        }</Button>
+                            }</Button>
                     </Col>
                     <Col xs={24} sm={12}>
-                        <Button 
-                            block 
-                            onClick={() => { 
+                        <Button
+                            block
+                            onClick={() => {
                                 showDeleteFn(record, deleteOkFn);
-                            }} 
+                            }}
                         >Delete</Button>
                     </Col>
                 </Row>)
@@ -205,7 +261,7 @@ function Users() {
                             name="username"
                             rules={[{ required: true, message: 'Please input something!' }]}
                         >
-                            <Input placeholder="search by username..." />
+                            <Input placeholder="search by username..." onPressEnter={searchByUsername} />
                         </Form.Item>
                     </Col>
                 </Row>
@@ -213,9 +269,9 @@ function Users() {
                     <Col span={24} className="button-box">
                         <Button
                             type="primary"
-                            onClick={searchByUsername}
+                            onClick={showAdd}
                         >
-                            Search
+                            Add
                         </Button>
                         <Button
                             style={{ margin: '0 8px' }}
@@ -242,6 +298,12 @@ function Users() {
                 scroll={{
                     x: 'max-content'
                 }}
+            />
+            <Add
+                modalVisible={showAddBox}
+                initpass={INIT_PASSWORD}
+                onClick={addNewUser}
+                onCancel={hiddenAdd}
             />
         </div>
     );

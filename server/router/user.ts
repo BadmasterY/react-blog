@@ -21,6 +21,7 @@ import {
     UserInfoRequest,
     UserUploadAvatar,
     UserDataResult,
+    AddUserRequest,
 } from '../interfaces/users';
 
 
@@ -383,7 +384,6 @@ router.get('/avatars/*', ctx => {
     const { url } = ctx.request;
 
     let urlArr = url.split('/');
-    const tempArr: string[] = [];
     urlArr.shift(); // 第一个为空字符串
     urlArr.shift();
     const newUrl = urlArr.join('/');
@@ -399,6 +399,50 @@ router.get('/avatars/*', ctx => {
     const readStream = fs.createReadStream(filePath);
 
     ctx.body = readStream;
+});
+
+// 管理员添加新的用户
+router.post('/addUser', async (ctx, next) => {
+    const data: AddUserRequest = ctx.request.body;
+    const { username, password,  position, useState } = data;
+
+    console.log(`[User] ${getDate()} addUser: ${username}`);
+
+    const response: Response = { error: 1 };
+
+    const findItem = await users.findOne({ username }).catch(err => {
+        response.msg = '服务器异常, 请稍后重试!';
+        console.log(`[User] ${getDate()} addUser Error:`, err);
+    });
+
+    if (!findItem) {
+        const newUserData: Users = {
+            url: '',
+            bio: '',
+            username,
+            password,
+            nickname: `新用户_${new Date().getTime()}`,
+            position: toObjectId(position),
+            useState,
+            removed: 0,
+            avatarUrl: '',
+        };
+        await users.save(newUserData).then(result => {
+            if(result) {
+                response.error = 0;
+            }else {
+                response.msg = '添加失败!';
+            }
+        }).catch(err => {
+            response.msg = '添加失败!';
+            console.log(`[User] ${getDate()} addUser Error:`, err);
+        });
+    } else {
+        response.msg = '该用户已注册!';
+        console.log(`[User] ${getDate()} addUser Error: 用户 ${username} 已注册!`);
+    }
+
+    ctx.response.body = response;
 });
 
 export default router.routes();

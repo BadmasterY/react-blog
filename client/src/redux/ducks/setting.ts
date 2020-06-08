@@ -1,4 +1,3 @@
-// 博文
 import { Action, State, Payload } from '../../interfaces/setting';
 
 // actions

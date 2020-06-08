@@ -25,10 +25,16 @@ interface AddGroupRequest {
     useState: number;
 }
 
+interface GetGroupListResult {
+    _id: string;
+    name: string;
+}
+
 export {
     GetGroupsRequest,
     ResponseGroupList,
     DeleteGroupRequest,
     UpdateGroupRequest,
     AddGroupRequest,
+    GetGroupListResult,
 }
