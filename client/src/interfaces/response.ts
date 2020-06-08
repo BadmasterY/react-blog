@@ -129,13 +129,22 @@ interface GetSettingResult extends BaseResponse {
 interface GroupListItem {
     id: string;
     name: string;
+}
+
+interface GroupsItem extends GroupListItem {
     useState: number;
 }
 
 interface GetGroupsResponse extends BaseResponse {
     content?: {
         maxLength: number,
-        groups: GroupListItem[],
+        groups: GroupsItem[],
+    }
+}
+
+interface GetGroupListResponse extends BaseResponse {
+    content?: {
+        grouplist: GroupListItem[],
     }
 }
 
@@ -153,5 +162,7 @@ export type CommentsRes = CommentsResponse;
 export type UserInfoResult = GetUserInfoResult;
 export type UserUploadAvatarRes = UserUploadAvatarResponse;
 export type SettingResult = GetSettingResult;
-export type GroupItem = GroupListItem;
-export type GroupList = GetGroupsResponse;
+export type GroupItem = GroupsItem;
+export type Groups = GetGroupsResponse;
+export type GroupListContent = GroupListItem;
+export type GroupList = GetGroupListResponse;

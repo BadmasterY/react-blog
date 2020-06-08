@@ -13,7 +13,7 @@ const Users = createModel('users', {
     nickname: String,
     username: String,
     password: String,
-    position: String,
+    position: Schema.Types.ObjectId,
     removed: Number,
     useState: Number,
 });

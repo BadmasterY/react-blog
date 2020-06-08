@@ -10,6 +10,7 @@ import {
     DeleteGroupRequest,
     UpdateGroupRequest,
     AddGroupRequest,
+    GetGroupListResult,
 } from '../interfaces/groups';
 
 const router = new Router();
@@ -116,15 +117,45 @@ router.post('/addGroup', async (ctx, next) => {
     const response: Response = { error: 1 };
 
     await groups.save({ name, useState, removed: 0 }).then(result => {
-        if(result) {
+        if (result) {
             response.error = 0;
-        }else {
+        } else {
             response.msg = '添加失败!';
         }
     }).catch(err => {
         response.msg = '服务器异常, 请稍后重试!';
         console.log(`[Groups] ${getDate()} addGroup Error:`, err);
     });
+
+    ctx.response.body = response;
+});
+
+router.post('/getGroupList', async (ctx, next) => {
+    console.log(`[Groups] ${getDate()} getGroupList`);
+
+    const response: Response = { error: 1 };
+
+    await groups.findAll({ removed: 0, useState: 1 }, 'name')
+        .then((result: GetGroupListResult[]) => {
+            const grouplist = [];
+
+            for(let i = 0; i < result.length; i++) {
+                const { _id, name } = result[i];
+
+                grouplist.push({
+                    id: _id,
+                    name,
+                });
+            }
+
+            response.error = 0;
+            response.content = {
+                grouplist,
+            };
+        }).catch(err => {
+            console.log(`[Groups] ${getDate()} getGroupList Error:`, err);
+            response.msg = '服务器异常, 请稍后重试!';
+        });
 
     ctx.response.body = response;
 });

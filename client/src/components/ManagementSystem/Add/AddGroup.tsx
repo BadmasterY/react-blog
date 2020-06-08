@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Form, Button, Input, Switch, Modal } from 'antd';
 
-import { AddProps } from '../../../interfaces/group';
+import { AddProps } from '../../../interfaces/adds';
 
-function Add(props: AddProps) {
+function AddGroup(props: AddProps) {
     const { modalVisible, onClick, onCancel } = props;
 
     const [isLoading, setLoading] = useState(false);
@@ -32,7 +32,7 @@ function Add(props: AddProps) {
             onCancel={onCancel}
             children={
                 <Form
-                    id="add-modal"
+                    id="add-group-modal"
                     labelCol={{ span: 5 }}
                     wrapperCol={{ span: 19 }}
                     initialValues={initialValues}
@@ -83,4 +83,4 @@ function Add(props: AddProps) {
     );
 }
 
-export default Add;
+export default AddGroup;

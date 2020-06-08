@@ -151,6 +151,7 @@ function Login() {
                         className="login-input"
                         onPressEnter={login}
                         placeholder="Input username..."
+                        autoComplete='off'
                         allowClear={true}
                     />
                 </Form.Item>
@@ -164,7 +165,7 @@ function Login() {
                         className="login-input"
                         onPressEnter={login}
                         placeholder="Input password..."
-                        autoComplete=''
+                        autoComplete='off'
                     />
                 </Form.Item>
                 <Button loading={isLogging} block className="login-btn" onClick={login}>{
