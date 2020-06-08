@@ -15,13 +15,10 @@ import { md5 } from '../../../utils/md5';
 
 import './users.css';
 
-const INIT_PASSWORD = '123456';
-
 const { initialPageSize, columns } = system;
-const initialData: any[] = [];
 
 function Users() {
-    const [dataSource, setData] = useState(initialData);
+    const [dataSource, setData] = useState<ListContent[]>([]);
     const [total, setTotal] = useState(0);
     const [firstLoad, setFirstLoad] = useState(true);
     const [isLoading, setLoading] = useState(true);
@@ -79,7 +76,7 @@ function Users() {
             const length = dataSource.length;
             const newPage = length === 1 ? initialPage - 1 : initialPage;
             if (newPage <= 0) {
-                setData(initialData);
+                setData([]);
                 return;
             }
             setPage(newPage);
@@ -164,8 +161,8 @@ function Users() {
 
     async function addNewUser(form: FormInstance, onEnd = () => { }, onError = () => { }) {
         await form.validateFields().then(async result => {
-            let { name, position } = (result as AddUserForm);
-            let password = md5(INIT_PASSWORD);
+            let { name, pass, position } = (result as AddUserForm);
+            let password = md5(pass);
 
             await axios.post('/user/addUser', {
                 username: name,
@@ -185,7 +182,6 @@ function Users() {
 
                 message.success('Added!');
                 hiddenAdd();
-                console.log('ok!');
                 loadUserList(initialPage, initialPageSize);
             }).catch(err => {
                 onError();
@@ -301,7 +297,6 @@ function Users() {
             />
             <Add
                 modalVisible={showAddBox}
-                initpass={INIT_PASSWORD}
                 onClick={addNewUser}
                 onCancel={hiddenAdd}
             />

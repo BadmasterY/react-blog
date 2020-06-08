@@ -8,7 +8,7 @@ import { GroupList, GroupListContent } from '../../../interfaces/response';
 const { Option } = Select;
 
 function AddUser(props: AddUserProp) {
-    const { modalVisible, initpass, onClick, onCancel } = props;
+    const { modalVisible, onClick, onCancel } = props;
     const [isLoading, setLoading] = useState(true);
     const [isAdding, setAdding] = useState(false);
     const [groupItem, setGroupItem] = useState<GroupListContent[]>([]);
@@ -68,7 +68,6 @@ function AddUser(props: AddUserProp) {
             }}
             children={
                 <Spin tip="Loading..." spinning={isLoading}>
-                    <p>Password: {initpass}</p>
                     <Form
                         id="add-user-modal"
                         labelCol={{ span: 5 }}
@@ -85,6 +84,18 @@ function AddUser(props: AddUserProp) {
                                 autoFocus={true}
                                 onPressEnter={onAdd}
                                 placeholder="input username..."
+                                autoComplete="off"
+                            />
+                        </Form.Item>
+                        <Form.Item
+                            key="pass"
+                            label="Password"
+                            name="pass"
+                            rules={[{ required: true, message: 'Please input password!' }]}
+                        >
+                            <Input.Password
+                                onPressEnter={onAdd}
+                                placeholder="input password..."
                                 autoComplete="off"
                             />
                         </Form.Item>
