@@ -54,7 +54,7 @@ function AddUser(props: AddUserProp) {
         if (!isLoading || !modalVisible) return;
 
         loadGroups();
-    }, [isLoading, modalVisible, loadGroups]);
+    });
 
     return (
         <Modal

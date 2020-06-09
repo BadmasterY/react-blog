@@ -29,6 +29,10 @@
     "system": {
         "menuList": [
             {
+                "key": "home",
+                "name": "Home"
+            },
+            {
                 "key": "articles",
                 "name": "Articles"
             },
@@ -49,7 +53,7 @@
                 "name": "Setting"
             }
         ],
-        "initialSelectItem": "articles",
+        "initialSelectItem": "home",
         "initialPageSize": 10,
         "columns": {
             "username": {

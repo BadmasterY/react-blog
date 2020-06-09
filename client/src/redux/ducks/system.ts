@@ -1,4 +1,4 @@
-import { Action, State, Payload } from '../../interfaces/system';
+import { Action, State } from '../../interfaces/system';
 
 // actions
 export const types = {
@@ -12,7 +12,7 @@ const initialState: State = {
 
 // reducer
 export default function reducer(state = initialState, action: Action = {}) {
-    const { payload } = action;
+    // const { payload } = action;
 
     switch (action.type) {
         case types.ISLOADING:

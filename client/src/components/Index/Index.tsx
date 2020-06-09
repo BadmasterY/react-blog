@@ -74,7 +74,7 @@ function App() {
           </Layout>
         </Route>
         <Route exact strict path="/login" children={props => Animation(<Login />, props, '/login')} />
-        <Route exact strict path="/system" children={props => Animation(<System />, props, '/system')} />
+        <Route exact strict path="/management/*" children={props => Animation(<System />, props, '/management')} />
         <Route path="*" children={props => Animation(<NotFound />, props, '/404')} />
       </Switch>
     </>

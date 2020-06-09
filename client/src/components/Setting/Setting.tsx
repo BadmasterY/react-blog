@@ -178,7 +178,7 @@ function Setting() {
                                     label="System"
                                     help="Manage users and articles."
                                 >
-                                    <Link to={'/system'}>Background management system</Link>
+                                    <Link to={'/management/home'}>Background management system</Link>
                                 </Form.Item>
                                 :
                                 ''

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Layout, Menu } from 'antd';
+import { Link } from 'react-router-dom';
 import MenuItem from 'antd/lib/menu/MenuItem';
 
 import { system } from '../../../config/default.json';
@@ -7,7 +8,7 @@ import { system } from '../../../config/default.json';
 import './sider.css';
 
 const { Sider } = Layout;
-const { menuList, initialSelectItem } = system;
+const { menuList } = system;
 
 interface SelectArguments {
     key: string;
@@ -16,14 +17,11 @@ interface SelectArguments {
     domEvent: any;
 }
 
-function SystemSider(props: { callback?: Function }) {
-    const { callback } = props;
-    const [initialSelect, setSelect] = useState(initialSelectItem);
+function SystemSider(props: { initialSelectItem: string, callback?: Function }) {
+    const { callback, initialSelectItem } = props;
     const [collapsed, setCollapsed] = useState(true);
 
     function changeSelect(select: SelectArguments) {
-        setSelect(select.key);
-
         if(callback !== undefined) callback(select.key);
     }
 
@@ -42,13 +40,13 @@ function SystemSider(props: { callback?: Function }) {
         >
             <Menu
                 // theme='dark'
-                selectedKeys={[initialSelect]}
+                selectedKeys={[initialSelectItem]}
                 onClick={changeSelect}
             >
                 {
                     menuList.map((item) => (
                         <Menu.Item key={item.key}>
-                            {item.name}
+                            <Link to={`/management/${item.key}`}>{item.name}</Link>
                         </Menu.Item>
                     ))
                 }

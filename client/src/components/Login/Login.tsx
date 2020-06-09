@@ -18,12 +18,12 @@ import './login.css';
 const { useVideo, useBackground, noBackground, randomBackgroundSize } = login;
 const num = Math.floor(Math.random() * randomBackgroundSize);
 let initFormValue: { username?: string, password?: string } = {};
+let isBack = false;
 
 function Login() {
     const localItem = localStorage.getItem(localName);
 
     const { isLogin } = useSelector((state: reduxState) => state.user);
-    const [isBack, setBack] = useState(false);
     const [autoLogin, setAutoLogin] = useState(false);
     const [isLogging, setLoging] = useState(false);
     const [showRegister, setRegister] = useState(false);
@@ -45,7 +45,7 @@ function Login() {
 
         if (isLogin && !isBack) {
             history.goBack();
-            setBack(true);
+            isBack = true;
         } else {
             if (localItem !== null) {
                 const loginData: LoginData = JSON.parse(localItem);
