@@ -44,7 +44,7 @@ function Login() {
         }
 
         if (isLogin && !isBack) {
-            history.push('/');
+            history.goBack();
             isBack = true;
         } else {
             if (localItem !== null) {
