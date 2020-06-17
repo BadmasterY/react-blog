@@ -18,6 +18,7 @@ const app = new Koa();
 
 app.use(cors({ origin: 'true' }));
 app.use(mount('/', KoaStatic(path.join(__dirname, 'public'))));
+app.use(mount('/management', KoaStatic(path.join(__dirname, 'public'))));
 app.use(KoaBody({
     multipart: true, // 解析 multipart bodies, 默认为 false
     jsonLimit: serverConfig.jsonLimit, // 控制body的parse转换大小 default 1mb
