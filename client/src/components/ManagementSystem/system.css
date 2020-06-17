@@ -4,6 +4,12 @@
     overflow: hidden;
 }
 
+.system-loading {
+    width: 100%;
+    padding: 30px 10px;
+    text-align: center;
+}
+
 .system-content {
     overflow-x: hidden;
     overflow-y: auto;
