@@ -46,8 +46,6 @@ function App() {
     if (document.readyState === 'complete') {
       const action = actions.systemLoaded();
       dispatch(action);
-      console.clear();
-      console.log('loaed!');
     }
   }
 
