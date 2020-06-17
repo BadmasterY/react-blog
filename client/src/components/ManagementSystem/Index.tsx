@@ -61,17 +61,17 @@ function System() {
                         <Header />
                         <Layout>
                             <Sider initialSelectItem={selectItem} callback={changeSelect} />
-                            <Suspense fallback={<div className="system-loading"><Spin /></div>}>
-                                <Content className="system-content">
+                            <Content className="system-content">
+                                <Suspense fallback={<div className="system-loading"><Spin /></div>}>
                                     <Route exact path="/management/home" children={props => Animation(<Home />, props, '/management/home')} />
                                     <Route path="/management/articles" children={props => Animation(<Articles />, props, '/management/articles')} />
                                     <Route path="/management/comments" children={props => Animation(<Comments />, props, '/management/comments')} />
                                     <Route path="/management/users" children={props => Animation(<Users />, props, '/management/users')} />
                                     <Route path="/management/groups" children={props => Animation(<Groups />, props, '/management/groups')} />
                                     <Route path="/management/setting" children={props => Animation(<Setting />, props, '/management/setting')} />
-                                    <Footer />
-                                </Content>
-                            </Suspense>
+                                </Suspense>
+                                <Footer />
+                            </Content>
                         </Layout>
                     </Layout>
                     : ''
