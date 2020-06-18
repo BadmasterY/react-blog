@@ -1,7 +1,7 @@
 import { State as CommentState } from './comment';
 
 interface BaseResponse {
-    error: number;
+    error: 0 | 1;
     msg?: string;
 }
 
@@ -148,6 +148,20 @@ interface GetGroupListResponse extends BaseResponse {
     }
 }
 
+interface GetArticlesLengthResponse extends BaseResponse {
+    content?: {
+        length: number;
+    }
+}
+
+interface GetCommentsLengthResponse extends GetArticlesLengthResponse {}
+
+interface GetSiteVersionResponse extends BaseResponse {
+    content?: {
+        version: string;
+    }
+}
+
 export type Response = BaseResponse;
 export type UserRes = UserResponse;
 export type UserList = UserListResponse;
@@ -166,3 +180,6 @@ export type GroupItem = GroupsItem;
 export type Groups = GetGroupsResponse;
 export type GroupListContent = GroupListItem;
 export type GroupList = GetGroupListResponse;
+export type ArticleLength = GetArticlesLengthResponse;
+export type CommentLength = GetCommentsLengthResponse;
+export type SiteVersion = GetSiteVersionResponse;

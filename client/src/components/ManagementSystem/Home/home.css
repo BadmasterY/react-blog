@@ -1,0 +1,16 @@
+.management-home {
+    width           : 100%;
+    min-height      : 100%;
+    overflow-x      : hidden;
+    overflow-y      : auto;
+    background-color: rgba(255, 255, 255, .8);
+    padding         : 10px;
+}
+
+.system-update-btn {
+    text-align: right;
+}
+
+.system-version {
+    text-align: right;
+}

@@ -35,3 +35,9 @@
     color: #000;
     top: 0;
 }
+
+@media screen and (max-width: 576px) {
+    .system-content {
+        padding: 3px;
+    }
+}

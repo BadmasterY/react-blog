@@ -119,4 +119,22 @@ router.post('/deleteComment', async (ctx, next) => {
     ctx.response.body = response;
 });
 
+router.post('/getCommentsLength', async (ctx, next) => {
+    console.log(`[Comment] ${getDate()} getCommentsLength`);
+
+    const response: Response = { error: 1 };
+
+    await comments.findAll({ removed: 0 }).then(result => {
+        response.error = 0;
+        response.content = {
+            length: result.length,
+        };
+    }).catch(err => {
+        response.msg = '服务器异常!';
+        console.log(`[Comment] ${getDate()} getCommentsLength Error:`, err);
+    });
+
+    ctx.response.body = response;
+});
+
 export default router.routes();

@@ -198,51 +198,46 @@ router.post('/getArticles', async (ctx, next) => {
 
     const allResult = await articles.findAll({ removed: 0, ...query });
 
-    if (dataType(allResult) === 'Array') {
+    response.content = {
+        maxLength: allResult.length,
+    };
+
+    await articles.aggregate([
+        { $match: { removed: 0 } },
+        { $skip: skipSize },
+        { $limit: pageSize },
+        {
+            $lookup: {
+                from: "users",
+                localField: "authorId",
+                foreignField: "_id",
+                as: "author",
+            }
+        }
+    ]).then(result => {
+        const articlesArr = (result as GetArticlesResult[]);
+        const content: GetArticlesResponse[] = [];
+
+        for (let i = 0; i < articlesArr.length; i++) {
+            const item = articlesArr[i];
+            content.push({
+                id: item._id,
+                title: item.title,
+                author: item.author[0].nickname,
+                createTime: item.createTime,
+                updatedAt: item.updatedAt,
+            });
+        }
+
+        response.error = 0;
         response.content = {
-            maxLength: (allResult as Articles[]).length,
+            articles: content,
+            ...response.content,
         };
-
-        await articles.aggregate([
-            { $match: { removed: 0 } },
-            { $skip: skipSize },
-            { $limit: pageSize },
-            {
-                $lookup: {
-                    from: "users",
-                    localField: "authorId",
-                    foreignField: "_id",
-                    as: "author",
-                }
-            }
-        ]).then(result => {
-            const articlesArr = (result as GetArticlesResult[]);
-            const content: GetArticlesResponse[] = [];
-
-            for (let i = 0; i < articlesArr.length; i++) {
-                const item = articlesArr[i];
-                content.push({
-                    id: item._id,
-                    title: item.title,
-                    author: item.author[0].nickname,
-                    createTime: item.createTime,
-                    updatedAt: item.updatedAt,
-                });
-            }
-
-            response.error = 0;
-            response.content = {
-                articles: content,
-                ...response.content,
-            };
-        }).catch(err => {
-            response.msg = '获取数据失败!';
-            console.log(`[Article] ${getDate()} getArticles Error`, err);
-        })
-    } else {
-        response.msg = '服务器异常!';
-        console.log(`[Article] ${getDate()} getArticles Error`);
-    }
+    }).catch(err => {
+        response.msg = '获取数据失败!';
+        console.log(`[Article] ${getDate()} getArticles Error`, err);
+    });
 
     ctx.response.body = response;
 });
@@ -255,18 +250,36 @@ router.post('/deletArticle', async (ctx, next) => {
 
     const response: Response = { error: 1 };
 
-    await articles.updateOne({_id: id}, { removed: 1 }).then(result => {
-        const { ok } = (result as {ok: number});
+    await articles.updateOne({ _id: id }, { removed: 1 }).then(result => {
+        const { ok } = (result as { ok: number });
 
-        if(ok === 1) {
+        if (ok === 1) {
             response.error = 0;
-        }else {
+        } else {
             response.msg = '删除失败!';
         }
     }).catch(err => {
         response.msg = '服务器异常!';
         console.log(`[Article] ${getDate()} deleteArticle Error:`, err);
     })
+
+    ctx.response.body = response;
+});
+
+router.post('/getArticlesLength', async (ctx, next) => {
+    console.log(`[Article] ${getDate()} getArticlesLength`);
+
+    const response: Response = { error: 1 };
+
+    await articles.findAll({ removed: 0 }).then(result => {
+        response.error = 0;
+        response.content = {
+            length: result.length,
+        };
+    }).catch(err => {
+        response.msg = '服务器异常!';
+        console.log(`[Article] ${getDate()} getArticlesLength Error:`, err);
+    });
 
     ctx.response.body = response;
 });
