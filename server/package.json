@@ -16,8 +16,7 @@
     "debug": "DEBUG='*' ts-node index.ts",
     "serve": "ts-node-dev index.ts",
     "build-ts": "tsc",
-    "build-app": "pkg package.json --out-path ./build",
-    "build": "yarn build-ts && yarn build-app"
+    "build-app": "pkg package.json --out-path ./build"
   },
   "dependencies": {
     "koa": "^2.11.0",

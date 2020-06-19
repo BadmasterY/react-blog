@@ -10,8 +10,14 @@ yarn serve // 开发模式
 ```
 
 ### 打包
+编译 `ts`:
 ```
-yarn build // 检查 ./build
+yarn build-ts // 检查 ./dist
+```
+
+将 `client` 中构建的前端文件放入 `./dist/public` 文件夹下:
+```
+yarn build-app // 检查 ./build
 ```
 
 ### 配置
