@@ -1,7 +1,6 @@
 import Router from 'koa-router';
 import fs from 'fs';
 import path from 'path';
-import config from 'config';
 import { v4 as uuid4 } from 'uuid';
 
 import { users, articles, comments, groups } from '../db';
@@ -10,7 +9,6 @@ import { toObjectId } from '../db/base/Plugin';
 import { getDate, dataType, mkdirsSync, delDirSync } from '../utils/util';
 import { Response } from '../interfaces/response';
 import { Users, Groups } from '../interfaces/models';
-import { Avatar } from '../interfaces/config'
 import {
     List as UserList,
     RegisterRequest as Register,
@@ -24,9 +22,9 @@ import {
     AddUserRequest,
 } from '../interfaces/users';
 
+import { AVATAR_DIR } from '../config/config';
 
 const router = new Router();
-const avatarConfig: Avatar = config.get('avatar');
 
 // 登录
 router.post('/login', async (ctx, next) => {
@@ -336,7 +334,7 @@ router.post('/uploadAvatar', async (ctx, next) => {
 
     if (files) {
         let isCreated = false;
-        const filePath = path.join('./', `${avatarConfig.dirName}/${id}`);
+        const filePath = path.join('./', `${AVATAR_DIR}/${id}`);
         if (!fs.existsSync(filePath)) {
             isCreated = mkdirsSync(filePath);
         } else {

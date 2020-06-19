@@ -20,7 +20,6 @@
     "build": "yarn build-ts && yarn build-app"
   },
   "dependencies": {
-    "config": "^3.3.0",
     "koa": "^2.11.0",
     "koa-body": "^4.1.1",
     "koa-mount": "^4.0.0",

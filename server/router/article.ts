@@ -17,7 +17,6 @@ import {
     GetArticlesResponse,
     DeleteRequest,
 } from '../interfaces/articles';
-import { Users } from '../interfaces/models';
 
 const router = new Router();
 

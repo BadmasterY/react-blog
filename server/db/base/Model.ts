@@ -1,14 +1,11 @@
 // 模型
 import mongoose from 'mongoose';
-import config from 'config';
-
-import { configSchema } from '../../interfaces/config';
-
-const { Schema } = mongoose;
 
 // schema 相关配置
 // 详细查看 https://mongoosejs.com/docs/guide.html#options
-const schemaOptions: configSchema = config.get('schema');
+import { SCHEMA } from '../../config/config';
+
+const { Schema } = mongoose;
 
 /**
  * 创建 model
@@ -17,7 +14,7 @@ const schemaOptions: configSchema = config.get('schema');
  */
 function createModel(name: string, opts: mongoose.SchemaDefinition) {
     // 创建 schema
-    const schema = new Schema(opts, schemaOptions);
+    const schema = new Schema(opts, SCHEMA);
     // 创建 model
     const model = mongoose.model(name, schema);
 
