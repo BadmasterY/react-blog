@@ -11,7 +11,7 @@ yarn serve // 开发模式
 
 ### 打包
 ```
-yarn build // 检查 ./dist
+yarn build // 检查 ./build
 ```
 
 ### 配置

@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 import Router from 'koa-router';
 
 import Users from './user';
@@ -20,7 +21,7 @@ router.use('/system', System);
 // TODO: 更优雅的路由
 router.get('/*', ctx => {
     ctx.type = 'html';
-    ctx.body = fs.createReadStream('public/index.html');
+    ctx.body = fs.createReadStream('index.html');
 });
 
 const routes = router.routes();

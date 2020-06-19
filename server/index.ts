@@ -8,7 +8,6 @@ import KoaStatic from 'koa-static';
 import mount from 'koa-mount';
 
 import { routes } from './router';
-
 import { HTTP, SERVER } from './config/config';
 
 const app = new Koa();
