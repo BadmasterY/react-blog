@@ -8,6 +8,7 @@ import Comment from './comment';
 import Setting from './setting';
 import Group from './group';
 import System from './system';
+import Image from './image';
 
 const router = new Router();
 
@@ -17,6 +18,7 @@ router.use('/comment', Comment);
 router.use('/system', Setting);
 router.use('/group', Group);
 router.use('/system', System);
+router.use('/image', Image);
 
 // TODO: 更优雅的路由
 router.get('/*', ctx => {
