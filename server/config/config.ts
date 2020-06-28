@@ -7,9 +7,11 @@ import {
     configSchema as Schema,
 } from '../interfaces/config';
 
+const config = require('../package.json');
+
 export const CLINET_VERSION = '0.1.0';
 
-export const SERVER_VERSION = '0.1.0';
+export const SERVER_VERSION: string = config.version;
 
 export const HTTP: Http = {
     host: "0.0.0.0",
@@ -37,7 +39,7 @@ export const DB: DBConfig = {
     dbname: "react-blog",
     user: "",
     pass: "",
-    host: "127.0.0.1",
+    host: "0.0.0.0",
     port: "27017",
     autoIndex: false,
     useNewUrlParser: true,
@@ -46,7 +48,7 @@ export const DB: DBConfig = {
     socketTimeoutMS: 45000,
     poolSize: 10,
     replicaSet: {
-        // name: "",
+        // name: "react-blog",
         // members: [
         //     {
         //         host: "127.0.0.1",
