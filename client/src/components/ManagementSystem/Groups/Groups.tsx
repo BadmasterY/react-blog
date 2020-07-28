@@ -192,7 +192,7 @@ function Groups() {
     }
 
     function editFn(record: GroupItem) {
-        form.setFieldsValue({ name: '', useState: 0, ...record });
+        form.setFieldsValue({ ...record });
         setChecked(record.useState ? 1 : 0);
         setEditKey(record.id);
     }
@@ -336,7 +336,7 @@ function Groups() {
                     }}
                     loading={isLoading}
                     pagination={{
-                        position: 'bottomRight',
+                        position: ['bottomRight'],
                         current: initialPage,
                         pageSize: initialPageSize,
                         total,

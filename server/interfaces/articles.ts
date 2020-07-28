@@ -44,20 +44,10 @@ interface GetArticleListResponse extends Articles {
  * Blocks
  */
 interface ArticleBlocksItem {
-    key: string;
-    text: string;
     type: string;
-    depth: number;
-    inlineStyleRanges: {
-        offset: number;
-        length: number;
-        style: string;
-    }[];
-    entityRanges: {
-        offset: number;
-        length: number;
-        key: number;
-    }[];
+    data: {
+        [name: string]: any;
+    };
 }
 
 /**
@@ -86,7 +76,8 @@ interface ArticleEntityMap {
  */
 interface ArticleContentItem {
     blocks: ArticleBlocksItem[];
-    entityMap: ArticleEntityMap;
+    version?: string;
+    time?: number;
 }
 
 /**

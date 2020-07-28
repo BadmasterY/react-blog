@@ -1,5 +1,6 @@
-/node_modules
-/dist
-/public
-/avatars
-/build
+node_modules
+dist
+public
+avatars
+build
+images

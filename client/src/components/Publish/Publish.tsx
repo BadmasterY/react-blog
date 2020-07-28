@@ -2,54 +2,45 @@ import React, { useState, useEffect } from 'react';
 import { Drawer, Button, Form, Input, Modal, message } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
-import BraftEditor, { ControlType } from 'braft-editor';
 import localforage from 'localforage';
 import axios from 'axios';
+
+import Editor from '../Editor/Editor';
 
 import { reduxState } from '../../interfaces/state';
 import { Response } from '../../interfaces/response';
 
-import 'braft-editor/dist/index.css'
 import './publish.css';
+import { OutputData } from '@editorjs/editorjs';
 
 const { confirm } = Modal;
-const controls: ControlType[] = [
-    'font-size', 'separator',
-    'text-color', 'bold', 'italic', 'underline', 'strike-through', 'separator',
-    'superscript', 'subscript', 'separator',
-    'link', 'separator',
-    'headings', 'separator',
-    'list-ul', 'list-ol', 'separator',
-    'blockquote', 'code', 'separator',
-    'media',
-];
 
 /**
  * get the local data
  */
 async function getLocal(id: string) {
-    let localContent = '<p></p>', localTitle = '';
+    let localContent: OutputData = { blocks: [] }, localTitle = '';
     await localforage
-        .getItem(`articleContent_${id}`)
+        .getItem<OutputData>(`articleContent_${id}`)
         .then(value => {
             if (value !== null) {
-                localContent = (value as string);
+                localContent = value;
             }
         }).catch(err => console.log(err));
 
     await localforage
-        .getItem(`articleTitle_${id}`)
+        .getItem<string>(`articleTitle_${id}`)
         .then(value => {
             if (value !== null) {
-                localTitle = (value as string);
+                localTitle = value;
             }
         }).catch(err => console.log(err));
 
-    if (localContent === '<p></p>' && localTitle === '') return null;
+    if (localContent.blocks.length === 0 && localTitle === '') return null;
 
     return {
         title: localTitle,
-        content: BraftEditor.createEditorState(localContent),
+        content: localContent,
     };
 }
 
@@ -67,12 +58,13 @@ function Publish(props: { visible: boolean, callback?: Function }) {
 
     const { id } = useSelector((item: reduxState) => item.user);
     const [isPublish, setPublish] = useState(false);
+    const [editorUpdate, setEditorUpdate] = useState(false);
     const [form] = Form.useForm();
 
     function initialForm() {
         form.setFieldsValue({
             title: '',
-            content: BraftEditor.createEditorState('<p></p>'),
+            content: { blocks: [] },
         });
     }
 
@@ -88,7 +80,10 @@ function Publish(props: { visible: boolean, callback?: Function }) {
                     okText: 'Yes',
                     okType: 'primary',
                     cancelText: 'No',
-                    onOk: () => { form.setFieldsValue(result) },
+                    onOk: () => {
+                        form.setFieldsValue(result);
+                        setEditorUpdate(true);
+                    },
                     onCancel: () => {
                         clearLocal(id);
                     },
@@ -101,21 +96,19 @@ function Publish(props: { visible: boolean, callback?: Function }) {
         if (visible) localforage.setItem(`articleTitle_${id}`, event.target.value);
     }
 
-    function contentChange(editorState: any) {
-        if (visible) localforage.setItem(`articleContent_${id}`, editorState.toHTML());
-        console.log(editorState.toRAW(true));
+    function contentChange(data?: OutputData) {
+        if (visible) localforage.setItem(`articleContent_${id}`, data);
     }
 
     async function publishArticle() {
         setPublish(true);
         await form.validateFields().then(async result => {
             const { title, content } = result;
-            const contentString = content.toHTML();
 
             await axios.post('/article/publish', {
                 authorId: id,
                 title,
-                content: contentString,
+                content,
             }).then(result => {
                 const data: Response = result.data;
                 const { error, msg } = data;
@@ -155,7 +148,10 @@ function Publish(props: { visible: boolean, callback?: Function }) {
             height="100%"
             closable={false}
             forceRender={true}
+            destroyOnClose={true}
             onClose={() => {
+                setEditorUpdate(false);
+                initialForm();
                 if (callback) callback();
             }}
             bodyStyle={{
@@ -186,16 +182,20 @@ function Publish(props: { visible: boolean, callback?: Function }) {
                     name="title"
                     rules={[{ required: true, message: 'Please input title!' }]}
                 >
-                    <Input placeholder="Please input title..." onChange={titleChange} />
+                    <Input
+                        autoComplete="off"
+                        placeholder="Please input title..."
+                        onChange={titleChange}
+                    />
                 </Form.Item>
                 <Form.Item
                     name="content"
+                    valuePropName='data'
                     rules={[{
                         required: true,
                         message: 'Please input content!',
                         validator: (rule, value) => {
-                            const checkValue = value.toHTML();
-                            if (checkValue === '<p></p>') {
+                            if (value.blocks.length === 0) {
                                 return Promise.reject('');
                             } else {
                                 return Promise.resolve();
@@ -203,10 +203,10 @@ function Publish(props: { visible: boolean, callback?: Function }) {
                         }
                     }]}
                 >
-                    <BraftEditor
-                        controls={controls}
+                    <Editor
+                        needUpdate={editorUpdate}
                         onChange={contentChange}
-                        placeholder="Please input content..."
+                        onUpdated={() => { setEditorUpdate(false) }}
                     />
                 </Form.Item>
             </Form>

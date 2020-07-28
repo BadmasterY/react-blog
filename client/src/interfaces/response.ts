@@ -1,4 +1,5 @@
 import { State as CommentState } from './comment';
+import { OutputData } from '@editorjs/editorjs';
 
 interface BaseResponse {
     error: 0 | 1;
@@ -46,7 +47,7 @@ interface ArticleListItem {
         username: string;
     };
     title: string;
-    content: string;
+    content: OutputData;
     removed: number;
     createTime: string;
     updatedAt: string;

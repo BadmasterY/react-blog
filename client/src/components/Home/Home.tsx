@@ -9,7 +9,7 @@ import { content } from '../../config/default.json';
 
 import './home.css';
 
-const { Paragraph } = Typography;
+const { Paragraph, Title } = Typography;
 const { pageSize, pageSizeOptions } = content;
 const articales: ArticleItem[] = [];
 
@@ -100,13 +100,59 @@ function Home() {
                             />
                             <Paragraph
                                 ellipsis={{
-                                    rows: 3,
+                                    rows: 5,
+                                    expandable: true,
+                                    symbol: <></>,
                                 }}
                             >
                                 {
-                                    // TODO
-                                    // parser the html json
-                                    <div dangerouslySetInnerHTML={{ __html: item.content }}></div>
+                                    item.content.blocks.map((item, index) => {
+                                        switch (item.type) {
+                                            case 'paragraph':
+                                                return <p key={index} dangerouslySetInnerHTML={{ __html: item.data.text }} />;
+                                            case 'header':
+                                                return <Title key={index} level={item.data.level}>{item.data.text}</Title>;
+                                            case 'image':
+                                                return <img
+                                                    key={index}
+                                                    src={item.data.file.url}
+                                                    className={
+                                                        `detail-img ${item.data.withBackground ? 'detail-img-center' : ''} ${item.data.withBorder ? 'detail-img-border' : ''} ${item.data.stretched ? 'detail-img-stretched' : ''}`
+                                                    }
+                                                />;
+                                            case 'code':
+                                                return <pre key={index} className="detail-code">{item.data.code}</pre>
+                                            case 'list':
+                                                const list = item.data.items.map((item: string, index: number) => <li key={index}>{item}</li>);
+                                                const data = item.data.style === 'ordered' ?
+                                                    <ol key={index}>{list}</ol> : <ul key={index}>{list}</ul>;
+                                                return data;
+                                            case 'table':
+                                                return (
+                                                    <table key={index} className="detail-table">
+                                                        <tbody>
+                                                            {
+                                                                item.data.content.map((item: string[], index: number) => (
+                                                                    <tr key={index}>
+                                                                        {
+                                                                            item.map((item, index) => (
+                                                                                <td key={index}>
+                                                                                    <div>
+                                                                                        {item}
+                                                                                    </div>
+                                                                                </td>
+                                                                            ))
+                                                                        }
+                                                                    </tr>
+                                                                ))
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                );
+                                            default:
+                                                return <></>
+                                        }
+                                    })
                                 }
                             </Paragraph>
                             <Link

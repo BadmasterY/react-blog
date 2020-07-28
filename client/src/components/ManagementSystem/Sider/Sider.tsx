@@ -10,17 +10,17 @@ import './sider.css';
 const { Sider } = Layout;
 const { menuList } = system;
 
-interface SelectArguments {
-    key: string;
-    keyPath: string[];
-    item: MenuItem;
-    domEvent: any;
+interface MenuInfo {
+    key: React.Key;
+    keyPath: React.Key[];
+    item: React.ReactInstance;
+    domEvent: React.MouseEvent<HTMLElement>;
 }
 
 function SystemSider(props: { initialSelectItem: string, callback?: Function }) {
     const { callback, initialSelectItem } = props;
 
-    function changeSelect(select: SelectArguments) {
+    function changeSelect(select: MenuInfo) {
         if(callback !== undefined) callback(select.key);
     }
 

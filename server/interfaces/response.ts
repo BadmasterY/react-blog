@@ -1,9 +1,11 @@
-interface Response {
+export interface Response {
     error: number;
     msg?: string;
     content?: object;
 }
 
-export {
-    Response,
+export interface UploadImageResponse extends Response {
+    content?: {
+        url: string;
+    }
 }

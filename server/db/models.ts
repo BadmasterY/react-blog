@@ -21,7 +21,7 @@ const Users = createModel('users', {
 const Articles = createModel('articles', {
     authorId: Schema.Types.ObjectId,
     title: String,
-    content: String,
+    content: Object,
     removed: Number,
 });
 

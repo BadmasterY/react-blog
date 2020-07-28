@@ -136,7 +136,7 @@ function Comments() {
                 className="users-table"
                 loading={isLoading}
                 pagination={{
-                    position: 'bottomRight',
+                    position: ['bottomRight'],
                     current: initialPage,
                     pageSize: initialPageSize,
                     total,

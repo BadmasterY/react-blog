@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Divider, Spin, Tooltip, message } from 'antd';
+import { Divider, Spin, Tooltip, message, Typography } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
@@ -11,6 +11,8 @@ import { actions as commentActions } from '../../redux/ducks/comment';
 import { reduxState } from '../../interfaces/state';
 
 import './article.css';
+
+const { Title } = Typography;
 
 function Article() {
     const [isLoading, setLoading] = useState(true);
@@ -66,7 +68,57 @@ function Article() {
                         <span>{author.nickname}</span>
                     </Tooltip>
                 </p>
-                <div dangerouslySetInnerHTML={{ __html: content }}></div>
+                <Typography>
+                    {
+                        content.blocks.map((item, index) => {
+                            switch (item.type) {
+                                case 'paragraph':
+                                    return <p key={index} dangerouslySetInnerHTML={{ __html: item.data.text }} />;
+                                case 'header':
+                                    return <Title key={index} level={item.data.level}>{item.data.text}</Title>;
+                                case 'image':
+                                    return <img
+                                        key={index}
+                                        src={item.data.file.url}
+                                        className={
+                                            `detail-img ${item.data.withBackground ? 'detail-img-center' : ''} ${item.data.withBorder ? 'detail-img-border' : ''} ${item.data.stretched ? 'detail-img-stretched' : ''}`
+                                        }
+                                    />;
+                                case 'code':
+                                    return <pre key={index} className="detail-code">{item.data.code}</pre>
+                                case 'list':
+                                    const list = item.data.items.map((item: string, index: number) => <li key={index}>{item}</li>);
+                                    const data = item.data.style === 'ordered' ?
+                                        <ol key={index}>{list}</ol> : <ul key={index}>{list}</ul>;
+                                    return data;
+                                case 'table':
+                                    return (
+                                        <table key={index} className="detail-table">
+                                            <tbody>
+                                                {
+                                                    item.data.content.map((item: string[], index: number) => (
+                                                        <tr key={index}>
+                                                            {
+                                                                item.map((item, index) => (
+                                                                    <td key={index}>
+                                                                        <div>
+                                                                            {item}
+                                                                        </div>
+                                                                    </td>
+                                                                ))
+                                                            }
+                                                        </tr>
+                                                    ))
+                                                }
+                                            </tbody>
+                                        </table>
+                                    );
+                                default:
+                                    return <></>
+                            }
+                        })
+                    }
+                </Typography>
                 <p className="article-time">CreateTime: {createTime ? new Date(createTime).toLocaleString() : ''}</p>
                 <p className="article-time">UpdatedAt: {updatedAt ? new Date(updatedAt).toLocaleString() : ''}</p>
                 <Divider />
