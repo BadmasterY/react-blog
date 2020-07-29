@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Skeleton, List, Tooltip, Typography, message } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axois from 'axios';
 
 import { ArticleListRes, ArticleItem } from '../../interfaces/response';
@@ -19,6 +20,7 @@ function Home() {
     const [dataSource, setData] = useState(articales);
     const [maxLength, setMaxLength] = useState(0);
     const [initialPage, setPage] = useState(1);
+    const { t } = useTranslation();
 
     async function initialData() {
         setInitial(false);
@@ -45,7 +47,7 @@ function Home() {
             }
         }).catch(err => {
             setLoading(false);
-            message.error('Please check network!')
+            message.error(t('Please check network!'))
             console.log(err);
         });
     }
@@ -73,7 +75,7 @@ function Home() {
                         total: maxLength, // 总数
                     }}
                     locale={{
-                        emptyText: 'Empty...',
+                        emptyText: t('Empty...'),
                     }}
                     dataSource={dataSource}
                     renderItem={item => (
@@ -158,7 +160,7 @@ function Home() {
                             <Link
                                 className="home-readmore"
                                 to={`/article/${item.title}?article_id=${item._id}`}
-                            >Read More...</Link>
+                            >{t('Read More...')}</Link>
                         </List.Item>
                     )}
                 />

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Modal, Form, Button, Input, message } from 'antd';
 import { useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 import { md5 } from '../../utils/md5';
@@ -22,6 +23,7 @@ function FastLogin(props: Props) {
     const [isLogging, setLogging] = useState(false);
     const [form] = Form.useForm();
     const dispatch = useDispatch();
+    const { t } = useTranslation();
     
     function onCancel() {
         closeFn();
@@ -40,7 +42,7 @@ function FastLogin(props: Props) {
                     message.error(data.msg);
                     return;
                 }
-                message.success('Login success!');
+                message.success(t('Login success!'));
                 if (typeof data.content === 'object') {
                     const payload: Payload = Object.assign({}, data.content, {isLogin: true});
                     const action: Action = actions.userLogin(payload);
@@ -54,7 +56,7 @@ function FastLogin(props: Props) {
             });
         }).catch(err => {
             setLogging(false);
-            message.error('Please input username and password!');
+            message.error(t('Please input username and password!'));
             console.log(err);
         });
     }
@@ -72,35 +74,35 @@ function FastLogin(props: Props) {
                 hideRequiredMark={true}
             >
                 <Form.Item
-                    label="Username"
+                    label={t("Username")}
                     name="username"
-                    rules={[{ required: true, message: 'Please input your username!' }]}
+                    rules={[{ required: true, message: t('Please input username!') }]}
                 >
                     <Input
                         autoFocus={true}
                         className="login-input"
                         onPressEnter={login}
-                        placeholder="Input username..."
+                        placeholder={t("Input username...")}
                         allowClear={true}
                     />
                 </Form.Item>
                 <Form.Item
-                    label="Password"
+                    label={t("Password")}
                     name="password"
-                    rules={[{ required: true, message: 'Please input your password!' }]}
+                    rules={[{ required: true, message: t('Please input password!') }]}
                 >
                     <Input.Password
                         className="login-input"
                         onPressEnter={login}
-                        placeholder="Input password..."
+                        placeholder={t("Input password...")}
                         autoComplete=''
                     />
                 </Form.Item>
                 <Button loading={isLogging} block className="login-btn" onClick={login}>{
                     isLogging ?
-                        'Logging...'
+                        t('Logging...')
                         :
-                        'Login'
+                        t('Login')
                 }</Button>
             </Form>
         </Modal>

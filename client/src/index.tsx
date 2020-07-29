@@ -8,6 +8,8 @@ import * as serviceWorker from './serviceWorker';
 
 import stroe from './redux/store';
 
+import './i18n/i18n';
+
 import './index.css';
 
 const customHistory = createBrowserHistory(); // create history

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Form, Input, Button, message } from 'antd';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 import { reduxState } from '../../interfaces/state';
@@ -15,13 +16,14 @@ function ResetPassword(props: { callback: Function }) {
     const [form] = Form.useForm();
     const [reseting, setReset] = useState(false);
     const { callback } = props;
+    const { t } = useTranslation();
 
     async function reset() {
         setReset(true);
         await form.validateFields().then(async result => {
             const { oldpass ,newpass, aginpass } = (result as Reset);
             if(oldpass === newpass) {
-                message.error('Password is same! Please input other password!');
+                message.error(t('Password is same! Please input other password!'));
                 setReset(false);
                 return;
             }
@@ -41,23 +43,23 @@ function ResetPassword(props: { callback: Function }) {
                         message.error(data.msg);
                         return;
                     }
-                    message.success('Reset success!');
+                    message.success(t('Reset success!'));
 
                     callback();
                 }).catch(err => {
                     setReset(false);
-                    message.error('Please try again later!');
+                    message.error(t('Please try again later!'));
                     console.log(err);
                 });
             }else {
                 setReset(false);
-                message.error('Please check whether the two passwords are the same!');
+                message.error(t('Please check whether the two passwords are the same!'));
             }
 
         }).catch(err => {
             setReset(false);
             console.log(err);
-            message.error('Please check your input!');
+            message.error(t('Please check your input!'));
         });
     }
 
@@ -69,31 +71,31 @@ function ResetPassword(props: { callback: Function }) {
             form={form}
         >
             <Form.Item
-                label="Old password"
+                label={t('Old password')}
                 name="oldpass"
-                rules={[{ required: true, message: 'Please input your password!' }]}
+                rules={[{ required: true, message: t('Please input your password!') }]}
             >
                 <Input.Password
                     autoFocus={true}
                     onPressEnter={reset}
-                    placeholder="Input your password"
+                    placeholder={t('Input your password...')}
                 />
             </Form.Item>
             <Form.Item
-                label="New password"
+                label={t('New password')}
                 name="newpass"
-                rules={[{ required: true, message: 'Please input your new password!' }]}
+                rules={[{ required: true, message: t('Please input your new password!') }]}
             >
-                <Input.Password onPressEnter={reset} placeholder="Input your new password" />
+                <Input.Password onPressEnter={reset} placeholder={t('Input your new password...')} />
             </Form.Item>
             <Form.Item
-                label="New password"
+                label={t('New password')}
                 name="aginpass"
-                rules={[{ required: true, message: 'Please input your new password, agin!' }]}
+                rules={[{ required: true, message: t('Please input your new password, agin!') }]}
             >
-                <Input.Password onPressEnter={reset} placeholder="Input agin" />
+                <Input.Password onPressEnter={reset} placeholder={t('Input agin...')} />
             </Form.Item>
-            <Button loading={reseting} danger block onClick={reset}>{reseting ? 'Resetting' : 'Reset'}</Button>
+            <Button loading={reseting} danger block onClick={reset}>{reseting ? t('Resetting') : t('Reset')}</Button>
         </Form>
     );
 }

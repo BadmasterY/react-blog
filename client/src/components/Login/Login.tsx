@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import { Form, Input, Button, message, Modal } from 'antd';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 import Register from '../Register/Register';
@@ -30,6 +31,7 @@ function Login() {
     const [form] = Form.useForm();
     const history = useHistory();
     const dispatch = useDispatch();
+    const { t } = useTranslation();
 
     if (localItem !== null) {
         const loginData: LoginData = JSON.parse(localItem);
@@ -74,7 +76,7 @@ function Login() {
                 }
 
                 setLoging(false);
-                message.success('Login success!');
+                message.success(t('Login success!'));
                 // todo: 加密重新保存, 造成泄漏
                 localStorage.setItem(localName, JSON.stringify({
                     username,
@@ -94,7 +96,7 @@ function Login() {
             });
         }).catch(err => {
             setLoging(false);
-            message.error('Please input username and password!');
+            message.error(t('Please input username and password!'));
             console.log(err);
         });
     }
@@ -142,44 +144,44 @@ function Login() {
                 </h2>
                 <Form.Item
                     key="username"
-                    label="Username"
+                    label={t("Username")}
                     name="username"
-                    rules={[{ required: true, message: 'Please input your username!' }]}
+                    rules={[{ required: true, message: t('Please input username!') }]}
                 >
                     <Input
                         autoFocus={true}
                         className="login-input"
                         onPressEnter={login}
-                        placeholder="Input username..."
+                        placeholder={t("Input username...")}
                         autoComplete='off'
                         allowClear={true}
                     />
                 </Form.Item>
                 <Form.Item
                     key="password"
-                    label="Password"
+                    label={t("Password")}
                     name="password"
-                    rules={[{ required: true, message: 'Please input your password!' }]}
+                    rules={[{ required: true, message: t('Please input password!') }]}
                 >
                     <Input.Password
                         className="login-input"
                         onPressEnter={login}
-                        placeholder="Input password..."
+                        placeholder={t("Input password...")}
                         autoComplete='off'
                     />
                 </Form.Item>
                 <Button loading={isLogging} block className="login-btn" onClick={login}>{
                     isLogging ?
-                        'Logging...'
+                        t('Logging...')
                         :
-                        'Login'
+                        t('Login')
                 }</Button>
                 <div className="login-register-box">
                     <Button
                         className="login-register"
                         type="link"
                         onClick={showFn}
-                    >register now!</Button>
+                    >{t('register now!')}</Button>
                 </div>
             </Form>
             <Modal

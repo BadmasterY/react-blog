@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Drawer, Button, Form, Input, Modal, message } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import localforage from 'localforage';
 import axios from 'axios';
 
@@ -60,6 +61,7 @@ function Publish(props: { visible: boolean, callback?: Function }) {
     const [isPublish, setPublish] = useState(false);
     const [editorUpdate, setEditorUpdate] = useState(false);
     const [form] = Form.useForm();
+    const { t } = useTranslation();
 
     function initialForm() {
         form.setFieldsValue({
@@ -74,12 +76,12 @@ function Publish(props: { visible: boolean, callback?: Function }) {
         getLocal(id).then(result => {
             if (result !== null) {
                 confirm({
-                    title: 'Do you want to recover?',
+                    title: t('Do you want to recover?'),
                     icon: <QuestionCircleOutlined />,
-                    content: 'You have some uncommitted content. Do you need to restore it?',
-                    okText: 'Yes',
+                    content: t('You have some uncommitted content. Do you need to restore it?'),
+                    okText: t('Yes'),
                     okType: 'primary',
-                    cancelText: 'No',
+                    cancelText: t('No'),
                     onOk: () => {
                         form.setFieldsValue(result);
                         setEditorUpdate(true);
@@ -120,18 +122,18 @@ function Publish(props: { visible: boolean, callback?: Function }) {
                     return;
                 }
 
-                message.success('Published!');
+                message.success(t('Published!'));
                 if (callback) callback();
                 initialForm();
                 clearLocal(id);
             }).catch(err => {
                 setPublish(false);
-                message.error('Please check network!');
+                message.error(t('Please check network!'));
                 console.log(err);
             })
         }).catch(err => {
             setPublish(false);
-            message.error('Please check input!');
+            message.error(t('Please check input!'));
             console.log(err);
         });
     }
@@ -169,8 +171,8 @@ function Publish(props: { visible: boolean, callback?: Function }) {
                         onClick={() => {
                             if (callback) callback();
                         }}
-                    >Cancel</Button>
-                    <Button loading={isPublish} type="primary" onClick={publishArticle}>Submit</Button>
+                    >{t('Cancel')}</Button>
+                    <Button loading={isPublish} type="primary" onClick={publishArticle}>{t('Submit')}</Button>
                 </div>
             }
         >
@@ -180,11 +182,11 @@ function Publish(props: { visible: boolean, callback?: Function }) {
             >
                 <Form.Item
                     name="title"
-                    rules={[{ required: true, message: 'Please input title!' }]}
+                    rules={[{ required: true, message: t('Please input title!') }]}
                 >
                     <Input
                         autoComplete="off"
-                        placeholder="Please input title..."
+                        placeholder={t("Please input title...")}
                         onChange={titleChange}
                     />
                 </Form.Item>
@@ -193,7 +195,7 @@ function Publish(props: { visible: boolean, callback?: Function }) {
                     valuePropName='data'
                     rules={[{
                         required: true,
-                        message: 'Please input content!',
+                        message: t('Please input content!'),
                         validator: (rule, value) => {
                             if (value.blocks.length === 0) {
                                 return Promise.reject('');

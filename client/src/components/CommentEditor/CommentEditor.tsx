@@ -1,6 +1,7 @@
 import React from 'react';
 import { Form, Button, Input } from 'antd';
 import { FormInstance } from 'antd/lib/form';
+import { useTranslation } from 'react-i18next';
 
 import './commenteditor.css';
 
@@ -15,6 +16,7 @@ function CommentEditor(props: Props) {
     const { isSubmitting, onSubmit } = props;
 
     const [form] = Form.useForm();
+    const { t } = useTranslation();
 
     return (
         <Form
@@ -24,7 +26,7 @@ function CommentEditor(props: Props) {
         >
             <Form.Item
                 name="commentContent"
-                rules={[{ required: true, message: 'Please input comment!' }]}
+                rules={[{ required: true, message: t('Please input comment!') }]}
             >
                 <TextArea
                     rows={4}
@@ -39,7 +41,7 @@ function CommentEditor(props: Props) {
                     onClick={event => { onSubmit(form) }}
                     type="primary"
                     loading={isSubmitting}
-                >Add Comment</Button>
+                >{t('Add Comment')}</Button>
             </Form.Item>
         </Form>
     );

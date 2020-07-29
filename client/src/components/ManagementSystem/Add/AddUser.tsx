@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Input, Modal, Spin, Select, message } from 'antd';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 import { AddUserProp } from '../../../interfaces/adds';
@@ -14,6 +15,7 @@ function AddUser(props: AddUserProp) {
     const [groupItem, setGroupItem] = useState<GroupListContent[]>([]);
 
     const [form] = Form.useForm();
+    const { t } = useTranslation();
 
     async function loadGroups() {
         await axios.post('/group/getGroupList').then(result => {
@@ -32,7 +34,7 @@ function AddUser(props: AddUserProp) {
             }
         }).catch(err => {
             console.error(err);
-            message.error('Please check network!');
+            message.error(t('Please check network!'));
         });
     }
 
@@ -59,7 +61,7 @@ function AddUser(props: AddUserProp) {
     return (
         <Modal
             visible={modalVisible}
-            title={<span>Add</span>}
+            title={<span>{t('Add')}</span>}
             footer={null}
             onCancel={() => {
                 onCancel();
@@ -67,7 +69,7 @@ function AddUser(props: AddUserProp) {
                 setLoading(true);
             }}
             children={
-                <Spin tip="Loading..." spinning={isLoading}>
+                <Spin tip={t("Loading...")} spinning={isLoading}>
                     <Form
                         id="add-user-modal"
                         labelCol={{ span: 5 }}
@@ -76,34 +78,34 @@ function AddUser(props: AddUserProp) {
                     >
                         <Form.Item
                             key="name"
-                            label="UserName"
+                            label={t("UserName")}
                             name="name"
-                            rules={[{ required: true, message: 'Please input username!' }]}
+                            rules={[{ required: true, message: t('Please input username!') }]}
                         >
                             <Input
                                 autoFocus={true}
                                 onPressEnter={onAdd}
-                                placeholder="input username..."
+                                placeholder={t("Input username...")}
                                 autoComplete="off"
                             />
                         </Form.Item>
                         <Form.Item
                             key="pass"
-                            label="Password"
+                            label={t("Password")}
                             name="pass"
-                            rules={[{ required: true, message: 'Please input password!' }]}
+                            rules={[{ required: true, message: t('Please input password!') }]}
                         >
                             <Input.Password
                                 onPressEnter={onAdd}
-                                placeholder="input password..."
+                                placeholder={t("Input password...")}
                                 autoComplete="off"
                             />
                         </Form.Item>
                         <Form.Item
                             key="position"
-                            label="Group"
+                            label={t("Group")}
                             name="position"
-                            rules={[{ required: true, message: 'Please select group!' }]}
+                            rules={[{ required: true, message: t('Please select group!') }]}
                         >
                             <Select>
                                 {
@@ -124,7 +126,7 @@ function AddUser(props: AddUserProp) {
                                 type="primary"
                                 onClick={onAdd}
                                 block
-                            >Add</Button>
+                            >{t('Add')}</Button>
                         </Form.Item>
                     </Form>
                 </Spin>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { List, Comment, Avatar, Popover } from 'antd';
 import { LinkOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 
 import './commentlist.css';
 
@@ -24,12 +25,14 @@ interface Props {
 function CommentList(props: Props) {
     const { comments } = props;
 
+    const { t } = useTranslation();
+
     return (
         <>
             <List
                 className="comment-list"
                 dataSource={comments}
-                header={`${comments.length} ${comments.length > 1 ? 'replies' : 'reply'}`}
+                header={`${comments.length} ${comments.length > 1 ? t('replies') : t('reply')}`}
                 itemLayout="horizontal"
                 renderItem={({ author, avatar, content, datetime }) => {
                     return (<Comment

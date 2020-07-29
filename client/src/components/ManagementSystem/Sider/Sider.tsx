@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Layout, Menu } from 'antd';
 import { Link } from 'react-router-dom';
-import MenuItem from 'antd/lib/menu/MenuItem';
+import { useTranslation } from 'react-i18next';
 
 import { system } from '../../../config/default.json';
 
@@ -19,6 +19,7 @@ interface MenuInfo {
 
 function SystemSider(props: { initialSelectItem: string, callback?: Function }) {
     const { callback, initialSelectItem } = props;
+    const { t } = useTranslation();
 
     function changeSelect(select: MenuInfo) {
         if(callback !== undefined) callback(select.key);
@@ -40,7 +41,7 @@ function SystemSider(props: { initialSelectItem: string, callback?: Function }) 
                 {
                     menuList.map((item) => (
                         <Menu.Item key={item.key}>
-                            <Link to={`/management/${item.key}`}>{item.name}</Link>
+                            <Link to={`/management/${item.key}`}>{t(item.name)}</Link>
                         </Menu.Item>
                     ))
                 }

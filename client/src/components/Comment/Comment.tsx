@@ -3,6 +3,7 @@ import { Comment, Avatar, message } from 'antd';
 import { FormInstance } from 'antd/lib/form';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 import List from '../CommentList/CommentList';
@@ -23,6 +24,7 @@ function MyComment() {
     const { _id } = useSelector((item: reduxState) => item.article);
     const { list } = useSelector((item: reduxState) => item.comment);
     const dispatch = useDispatch();
+    const { t } = useTranslation();
 
     async function onSubmit(form: FormInstance) {
         if (!isLogin) {
@@ -52,7 +54,7 @@ function MyComment() {
                     return;
                 }
 
-                message.success('Comment!');
+                message.success(t('Comment!'));
                 const action = actions.commentAdd(Object.assign({}, commentData, {
                     author: [{
                         id,
@@ -66,12 +68,12 @@ function MyComment() {
                 form.resetFields();
             }).catch(err => {
                 setSubmitting(false);
-                message.error('Please check network!');
+                message.error(t('Please check network!'));
                 console.log(err);
             });
         }).catch(err => {
             setSubmitting(false);
-            message.error('Please check input!');
+            message.error(t('Please check input!'));
             console.log(err);
         })
     }

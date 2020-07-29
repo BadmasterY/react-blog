@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Divider, Spin, Tooltip, message, Typography } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 import Comment from '../Comment/Comment';
@@ -19,6 +20,7 @@ function Article() {
     const { title, content, author, createTime, updatedAt } = useSelector((item: reduxState) => item.article);
     const history = useHistory();
     const dispatch = useDispatch();
+    const { t } = useTranslation();
 
     async function getArticle(search: string) {
         const searchString = search.split('?')[1];
@@ -119,8 +121,8 @@ function Article() {
                         })
                     }
                 </Typography>
-                <p className="article-time">CreateTime: {createTime ? new Date(createTime).toLocaleString() : ''}</p>
-                <p className="article-time">UpdatedAt: {updatedAt ? new Date(updatedAt).toLocaleString() : ''}</p>
+                <p className="article-time">{t('CreateTime')}: {createTime ? new Date(createTime).toLocaleString() : ''}</p>
+                <p className="article-time">{t('UpdatedAt')}: {updatedAt ? new Date(updatedAt).toLocaleString() : ''}</p>
                 <Divider />
                 <Comment />
             </div>

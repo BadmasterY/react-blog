@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Row, Col, Card, Statistic, Button, Divider, Skeleton, Tooltip, Empty, message } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 import { actions } from '../../../redux/ducks/system';
@@ -20,6 +21,7 @@ function Home() {
     const [loadingNews, setNewsLoading] = useState(true);
     const [newVersion, setNewVersion] = useState(VERSION);
     const dispatch = useDispatch();
+    const { t } = useTranslation();
 
     useEffect(() => {
         getArtiles();
@@ -44,7 +46,7 @@ function Home() {
             }
         }).catch(err => {
             console.log(err);
-            message.error('Please check network!');
+            message.error(t('Please check network!'));
         });
     }
 
@@ -65,7 +67,7 @@ function Home() {
             }
         }).catch(err => {
             console.log(err);
-            message.error('Please check network!');
+            message.error(t('Please check network!'));
         });
     }
 
@@ -84,7 +86,7 @@ function Home() {
             }
         }).catch(err => {
             console.log(err);
-            message.error('Please check network!');
+            message.error(t('Please check network!'));
         });
     }
 
@@ -92,58 +94,58 @@ function Home() {
         <div className="management-home">
             <Row>
                 <Col span={24}>
-                    <h2>Welcome!</h2>
-                    <p>Thanks for using, created by <a target="_blank" rel="noopener noreferrer" href="https://github.com/BadmasterY/react-blog">blog</a>.</p>
+                    <h2>{t('Welcome!')}</h2>
+                    <p>{t('Thanks for using, created by')} <a target="_blank" rel="noopener noreferrer" href="https://github.com/BadmasterY/react-blog">blog</a>.</p>
                 </Col>
             </Row>
             <Row>
                 <Col xs={24} sm={12} md={8}>
-                    <h3>Start:</h3>
-                    <Tooltip title="coming soon...">
-                        <Button disabled={true} type='primary'>Custom theme</Button>
+                    <h3>{t('Start')}:</h3>
+                    <Tooltip title={t("coming soon...")}>
+                        <Button disabled={true} type='primary'>{t('Custom theme')}</Button>
                     </Tooltip>
                 </Col>
                 <Col xs={24} sm={12} md={8}>
-                    <h3>More:</h3>
+                    <h3>{t('More')}:</h3>
                     <Skeleton title={false} loading={loadingMore} active paragraph={{ rows: 3 }}>
 
                     </Skeleton>
                 </Col>
                 <Col xs={24} sm={12} md={8}>
-                    <h3>Others:</h3>
+                    <h3>{t('Others')}:</h3>
                     <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={false} />
                 </Col>
             </Row>
             <Divider />
             <Row gutter={8}>
                 <Col xs={24} sm={12}>
-                    <h4>Overview:</h4>
+                    <h4>{t('Overview')}:</h4>
                     <Link to="/management/articles">
                         <Card size='small' hoverable style={{ marginBottom: '8px' }}>
                             <Skeleton loading={loadingArticles} active paragraph={{ rows: 1 }}>
-                                <Statistic title="Articles" value={articles} />
+                                <Statistic title={t("Articles")} value={articles} />
                             </Skeleton>
                         </Card>
                     </Link>
                     <Link to="/management/comments">
                         <Card size='small' hoverable style={{ marginBottom: '8px' }}>
                             <Skeleton loading={loadingComments} active paragraph={{ rows: 1 }}>
-                                <Statistic title="Comments" value={comments} />
+                                <Statistic title={t("Comments")} value={comments} />
                             </Skeleton>
                         </Card>
                     </Link>
-                    <p className="system-version">version: {VERSION}</p>
+                    <p className="system-version">{t('version')}: {VERSION}</p>
                     <div className="system-update-btn">
                         {
                             VERSION === newVersion ?
                                 ''
                                 :
-                                <Button>Upgrade: {newVersion}</Button>
+                                <Button>{t('Upgrade')}: {newVersion}</Button>
                         }
                     </div>
                 </Col>
                 <Col xs={24} sm={12}>
-                    <h4>Events:</h4>
+                    <h4>{t('Events')}:</h4>
                     <Skeleton title={false} loading={loadingEvents} active paragraph={{ rows: 5 }}>
 
                     </Skeleton>
@@ -151,7 +153,7 @@ function Home() {
             </Row>
             <Row>
                 <Col span={24}>
-                    <h4>News:</h4>
+                    <h4>{t('News')}:</h4>
                     <Skeleton title={false} loading={loadingNews} active paragraph={{ rows: 10 }}>
 
                     </Skeleton>

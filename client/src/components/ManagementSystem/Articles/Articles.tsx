@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Row, Col, Button, message } from 'antd';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 import { showDeleteFn } from '../Delete/Delete';
@@ -18,6 +19,7 @@ function Articles() {
     const [initialPage, setPage] = useState(1);
     const [total, setTotal] = useState(0);
     const [dataSource, setData] = useState(initialData);
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (firstLoad) loadArticles(initialPage, initialPageSize);
@@ -52,7 +54,7 @@ function Articles() {
                 setData(data);
             }
         }).catch(err => {
-            message.error('Please check network!');
+            message.error(t('Please check network!'));
             console.log(err);
         });
     }
@@ -74,7 +76,7 @@ function Articles() {
                 return;
             }
 
-            message.success('Deleted!');
+            message.success(t('Deleted!'));
             const length = dataSource.length;
             const newPage = length === 1 ? initialPage - 1 : initialPage;
             if (newPage <= 0) {
@@ -84,24 +86,32 @@ function Articles() {
             setPage(newPage);
             loadArticles(newPage, initialPageSize);
         }).catch(err => {
-            message.error('Please check network!');
+            message.error(t('Please check network!'));
             console.log(err);
         })
     }
 
     const initialColumns = [
-        columns.title,
-        columns.author,
         {
-            ...columns.createTime,
+            ...columns.title,
+            title: t(columns.title.title),
+        },
+        {
+            ...columns.author,
+            title: t(columns.author.title),
+        },
+        {
+            title: t(columns.createTime.title),
+            dataIndex: columns.createTime.dataIndex,
             render: (text: any, record: ArticlesItem) => <span>{new Date(record.createTime).toLocaleString()}</span>,
         },
         {
-            ...columns.updatedAt,
+            title: t(columns.updatedAt.title),
+            dataIndex: columns.updatedAt.dataIndex,
             render: (text: any, record: ArticlesItem) => <span>{new Date(record.updatedAt).toLocaleString()}</span>,
         },
         {
-            title: "Action",
+            title: t("Action"),
             key: "action",
             render: (text: any, record: ArticlesItem) => {
                 return (<Row gutter={[6, 6]}>
@@ -111,7 +121,7 @@ function Articles() {
                             onClick={() => {
                                 showDeleteFn(record, deleteOkFn);
                             }}
-                        >Delete</Button>
+                        >{t('Delete')}</Button>
                     </Col>
                 </Row>)
             },
@@ -124,7 +134,7 @@ function Articles() {
                 <Button type="primary" onClick={() => {
                     setLoadding(true);
                     loadArticles(initialPage, initialPageSize);
-                }}>Refresh</Button>
+                }}>{t('Refresh')}</Button>
             </div>
             <Table
                 className="articles-table"

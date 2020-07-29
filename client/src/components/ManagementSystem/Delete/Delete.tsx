@@ -1,10 +1,15 @@
 import React from 'react';
 import { Modal } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 
 const { confirm } = Modal;
 
-function Delete() { return (<></>) };
+function Delete() {
+    const { t } = useTranslation();
+
+    return (<></>)
+};
 
 function showDeleteFn(record: any, deleteOkFn: (record: any) => void) {
     confirm({
