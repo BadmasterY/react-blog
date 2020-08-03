@@ -55,7 +55,7 @@ i18n
                     'Login': '登录',
                     'Logging...': '登录中...',
                     'Empty...': '暂无内容...',
-                    'Read More...': '查看更多...',
+                    'Read More...': '查看更多',
                     'register now!': '注册',
                     'Please input ': '请输入',
                     'Added!': '添加成功!',
@@ -148,6 +148,7 @@ i18n
                     'Reset Password': '重置密码',
                     'Publish articles': '发表文章',
                     'Manage users and articles.': '管理用户与文章。',
+                    'The password is 6 to 18 digits long and contains only numbers, letters and underscores!': '密码长度应当为6-18位, 仅包含数字、字母和下划线!',
                 }
             },
             'en': {

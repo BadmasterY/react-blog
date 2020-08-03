@@ -17,6 +17,8 @@ interface Props {
     callback?: () => void;
 }
 
+const passRegexp = /^(?=.*[A-Za-z])\w{6,18}$/;
+
 function FastLogin(props: Props) {
     const { isShow, closeFn, callback } = props;
 
@@ -89,7 +91,19 @@ function FastLogin(props: Props) {
                 <Form.Item
                     label={t("Password")}
                     name="password"
-                    rules={[{ required: true, message: t('Please input password!') }]}
+                    rules={[
+                        { required: true, message: t('Please input password!') },
+                        {
+                            type: 'string',
+                            validator(rule, value: string) {
+                                if(passRegexp.test(value)) {
+                                    return Promise.resolve();
+                                }else {
+                                    return Promise.reject(t('The password is 6 to 18 digits long and contains only numbers, letters and underscores!'))
+                                }
+                            }
+                        }
+                    ]}
                 >
                     <Input.Password
                         className="login-input"

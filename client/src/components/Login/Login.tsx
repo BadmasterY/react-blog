@@ -21,6 +21,8 @@ const num = Math.floor(Math.random() * randomBackgroundSize);
 let initFormValue: { username?: string, password?: string } = {};
 let isBack = false;
 
+const passRegexp = /^(?=.*[A-Za-z])\w{6,18}$/;
+
 function Login() {
     const localItem = localStorage.getItem(localName);
 
@@ -77,7 +79,6 @@ function Login() {
 
                 setLoging(false);
                 message.success(t('Login success!'));
-                // todo: 加密重新保存, 造成泄漏
                 localStorage.setItem(localName, JSON.stringify({
                     username,
                     password,
@@ -161,7 +162,19 @@ function Login() {
                     key="password"
                     label={t("Password")}
                     name="password"
-                    rules={[{ required: true, message: t('Please input password!') }]}
+                    rules={[
+                        { required: true, message: t('Please input password!') },
+                        {
+                            type: 'string',
+                            validator(rule, value: string) {
+                                if(passRegexp.test(value)) {
+                                    return Promise.resolve();
+                                }else {
+                                    return Promise.reject(t('The password is 6 to 18 digits long and contains only numbers, letters and underscores!'))
+                                }
+                            }
+                        }
+                    ]}
                 >
                     <Input.Password
                         className="login-input"

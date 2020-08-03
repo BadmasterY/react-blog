@@ -3,12 +3,12 @@ import fs from 'fs';
 import path from 'path';
 import { v4 as uuid4 } from 'uuid';
 
-import { users, articles, comments, groups } from '../db';
+import { users, articles, comments, groups, settings } from '../db';
 import { toObjectId } from '../db/base/Plugin';
 
 import { getDate, dataType, mkdirsSync, delDirSync } from '../utils/util';
 import { Response } from '../interfaces/response';
-import { Users, Groups } from '../interfaces/models';
+import { Users, Groups, Settings } from '../interfaces/models';
 import {
     List as UserList,
     RegisterRequest as Register,
@@ -123,23 +123,30 @@ router.post('/register', async (ctx, next) => {
 
     const response: Response = { error: 1 };
 
-    const finded = await users.findOne({ username });
-    if (finded === null) {
-        await users.save(user).then(result => {
-            if (result) {
-                response.error = 0;
-            } else {
-                response.msg = '请稍后重试!';
-                console.log(`[User] ${getDate()} login error:`, response.msg);
-            }
-        }).catch(err => {
-            response.msg = '注册失败!';
-            console.log(`[User] ${getDate()} register error:`, err);
-        });
+    const settingResult: Settings = await settings.findOne({});
+    const { isUseRegister } = settingResult;
 
+    if (!isUseRegister) {
+        response.msg = '注册已关闭!';
     } else {
-        response.msg = `用户 ${username} 已注册!`;
-        console.log(`[User] ${getDate()} login error:`, response.msg);
+        const finded = await users.findOne({ username });
+        if (finded === null) {
+            await users.save(user).then(result => {
+                if (result) {
+                    response.error = 0;
+                } else {
+                    response.msg = '请稍后重试!';
+                    console.log(`[User] ${getDate()} login error:`, response.msg);
+                }
+            }).catch(err => {
+                response.msg = '注册失败!';
+                console.log(`[User] ${getDate()} register error:`, err);
+            });
+
+        } else {
+            response.msg = `用户 ${username} 已注册!`;
+            console.log(`[User] ${getDate()} login error:`, response.msg);
+        }
     }
     ctx.response.body = response;
 });
@@ -402,7 +409,7 @@ router.get('/avatars/*', ctx => {
 // 管理员添加新的用户
 router.post('/addUser', async (ctx, next) => {
     const data: AddUserRequest = ctx.request.body;
-    const { username, password,  position, useState } = data;
+    const { username, password, position, useState } = data;
 
     console.log(`[User] ${getDate()} addUser: ${username}`);
 
@@ -426,9 +433,9 @@ router.post('/addUser', async (ctx, next) => {
             avatarUrl: '',
         };
         await users.save(newUserData).then(result => {
-            if(result) {
+            if (result) {
                 response.error = 0;
-            }else {
+            } else {
                 response.msg = '添加失败!';
             }
         }).catch(err => {

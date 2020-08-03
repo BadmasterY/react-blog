@@ -29,7 +29,7 @@ export const SERVER: Server = {
 
 export const INIT_DB: InitDB = {
     username: "admin",
-    password: "admin",
+    password: "admin666",
     position: "管理员",
     removed: 0,
     useState: 1,

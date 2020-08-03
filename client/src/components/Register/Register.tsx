@@ -8,6 +8,8 @@ import { md5 } from '../../utils/md5';
 
 import './register.css';
 
+const passRegexp = /^(?=.*[A-Za-z])\w{6,18}$/;
+
 function Register(props: { callback: Function }) {
     const { callback } = props;
     const [isRegister, setRegister] = useState(false);
@@ -57,21 +59,45 @@ function Register(props: { callback: Function }) {
                 name="username"
                 rules={[{ required: true, message: t("Must input your username!") }]}
             >
-                <Input onPressEnter={register} placeholder={t("Input your username...")} />
+                <Input
+                    onPressEnter={register}
+                    placeholder={t("Input your username...")}
+                    autoComplete="off"
+                />
             </Form.Item>
             <Form.Item
                 label={t("Name")}
                 name="nickname"
                 rules={[{ required: true, max: 10, message: t("Must input your nickname!") }]}
             >
-                <Input onPressEnter={register} placeholder={t("Input your nickname...")} />
+                <Input
+                    onPressEnter={register}
+                    placeholder={t("Input your nickname...")}
+                    autoComplete="off"
+                />
             </Form.Item>
             <Form.Item
                 label={t("Password")}
                 name="password"
-                rules={[{ required: true, message: t("Must input your password!") }]}
+                rules={[
+                    { required: true, message: t("Must input your password!") },
+                    {
+                        type: 'string',
+                        validator(rule, value: string) {
+                            if (passRegexp.test(value)) {
+                                return Promise.resolve();
+                            } else {
+                                return Promise.reject(t('The password is 6 to 18 digits long and contains only numbers, letters and underscores!'))
+                            }
+                        }
+                    }
+                ]}
             >
-                <Input.Password onPressEnter={register} placeholder={t("Input your password...")} />
+                <Input.Password
+                    onPressEnter={register}
+                    placeholder={t("Input your password...")}
+                    autoComplete="off"
+                />
             </Form.Item>
             <Button loading={isRegister} type="primary" block onClick={register}>{t('Register')}</Button>
         </Form>
