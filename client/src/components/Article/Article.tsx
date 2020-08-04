@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Divider, Spin, Tooltip, message, Typography } from 'antd';
+import { Divider, Spin, Tooltip, message, Typography, Row, Col, Button } from 'antd';
+import { RollbackOutlined, ShareAltOutlined } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -42,13 +43,32 @@ function Article() {
                 const { comments } = content;
                 const arctileAction = articleActions.articaleGet(content);
                 dispatch(arctileAction);
-                const commentAction = commentActions.commentGet(comments);
+                const commentAction = commentActions.commentGet({
+                    list: comments,
+                });
                 dispatch(commentAction);
             }
         }).catch(err => {
             message.error('Please check network!');
             console.log(err);
         });
+    }
+
+    function replyFn() {
+        const { pathname, search } = history.location;
+        const id = search.split('=')[1];
+        const replyAction = commentActions.commentSetReply({
+            reply: {
+                articel: {
+                    id,
+                    title,
+                    url: pathname + search,
+                }
+            }
+        });
+        dispatch(replyAction);
+        const isReplyAction = commentActions.commentSetIsReply();
+        dispatch(isReplyAction);
     }
 
     useEffect(() => {
@@ -125,6 +145,15 @@ function Article() {
                 <p className="article-time">{t('UpdatedAt')}: {updatedAt ? new Date(updatedAt).toLocaleString() : ''}</p>
                 <Divider />
                 <Comment />
+                <Divider />
+                <Row gutter={[8, 8]}>
+                    <Col xs={24} md={6}>
+                        <Button block><ShareAltOutlined /> {t('Share')}</Button>
+                    </Col>
+                    <Col xs={24} md={6}>
+                        <Button type="primary" block onClick={replyFn}><RollbackOutlined /> {t('Reply to')}</Button>
+                    </Col>
+                </Row>
             </div>
         </Spin>
     );

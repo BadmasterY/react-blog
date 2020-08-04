@@ -1,4 +1,4 @@
-import { State as CommentState } from './comment';
+import { List as CommentList } from './comment';
 import { OutputData } from '@editorjs/editorjs';
 
 interface BaseResponse {
@@ -63,7 +63,7 @@ interface ArticleListResponse extends BaseResponse {
 }
 
 interface ArticleItemContent extends ArticleListItem {
-    comments: CommentState;
+    comments: CommentList[];
 }
 
 interface ArticleResponse extends BaseResponse {

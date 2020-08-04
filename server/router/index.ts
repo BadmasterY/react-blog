@@ -11,6 +11,16 @@ import Image from './image';
 
 const router = new Router();
 
+router.get('/', ctx => {});
+
+router.get('/article/*', ctx => {});
+
+router.get('/about', ctx => {});
+
+router.get('/user', ctx => {});
+
+router.get('/setting', ctx => {});
+
 router.use('/user', Users);
 router.use('/article', Article);
 router.use('/comment', Comment);

@@ -82,7 +82,8 @@ function MyHeader() {
                             <Menu.Item key="logout" onClick={logout}>
                                 {t('Logout')}
                             </Menu.Item>
-                            <Menu.Item>
+                            <Menu.Divider />
+                            <Menu.Item key="i18n">
                                 <a className="i18n-btn" onClick={changeLanguage}>
                                     {
                                         i18n.language === 'zh-CN' ? 'En' : '简'

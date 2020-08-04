@@ -4,6 +4,8 @@ import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
+import { localName } from '../../config/default.json';
+
 import { md5 } from '../../utils/md5';
 import { UserRes } from '../../interfaces/response';
 import { Action, Payload } from '../../interfaces/user';
@@ -45,12 +47,18 @@ function FastLogin(props: Props) {
                     return;
                 }
                 message.success(t('Login success!'));
+                localStorage.setItem(localName, JSON.stringify({
+                    username,
+                    password,
+                    isLogin: true,
+                }));
                 if (typeof data.content === 'object') {
                     const payload: Payload = Object.assign({}, data.content, {isLogin: true});
                     const action: Action = actions.userLogin(payload);
                     // user login
                     dispatch(action);
                 }
+                onCancel();
                 if(callback) callback();
             }).catch(err => {
                 setLogging(false);
@@ -74,6 +82,8 @@ function FastLogin(props: Props) {
             <Form
                 form={form}
                 hideRequiredMark={true}
+                labelCol={{ span: 5 }}
+                wrapperCol={{ span: 19 }}
             >
                 <Form.Item
                     label={t("Username")}
@@ -86,6 +96,7 @@ function FastLogin(props: Props) {
                         onPressEnter={login}
                         placeholder={t("Input username...")}
                         allowClear={true}
+                        autoComplete="off"
                     />
                 </Form.Item>
                 <Form.Item
@@ -109,7 +120,7 @@ function FastLogin(props: Props) {
                         className="login-input"
                         onPressEnter={login}
                         placeholder={t("Input password...")}
-                        autoComplete=''
+                        autoComplete='off'
                     />
                 </Form.Item>
                 <Button loading={isLogging} block className="login-btn" onClick={login}>{

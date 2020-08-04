@@ -29,6 +29,7 @@ const Comments = createModel('comments', {
     articleId: Schema.Types.ObjectId,
     title: String,
     authorId: Schema.Types.ObjectId,
+    replyId: Schema.Types.ObjectId,
     content: String,
     removed: Number,
     datetime: String,

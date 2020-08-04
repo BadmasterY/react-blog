@@ -138,6 +138,14 @@ router.post('/getArticle', async (ctx, next) => {
                 as: "author",
             }
         },
+        {
+            $lookup: {
+                from: "users",
+                localField: "replyId",
+                foreignField: "_id",
+                as: "replier",
+            }
+        }
     ]);
 
     await articles.aggregate([

@@ -2,14 +2,19 @@ interface UploadComment {
     id?: string;
     articleId: string;
     authorId: string;
+    replyId?: string;
+    replier?: {
+        _id: string;
+        nickname: string;
+    }[];
     avatar: string;
     content: string;
     datetime: string;
 }
 
-interface List extends UploadComment {
+export interface List extends UploadComment {
     author: {
-        id: string;
+        _id: string;
         avatarUrl?: string;
         nickname: string;
         bio: string;
@@ -20,10 +25,32 @@ interface List extends UploadComment {
 }
 
 interface CommentState {
-    list: List[]
+    list: List[];
+    isReply: boolean;
+    reply: CommentReply;
 }
 
-interface CommentPayload extends List {}
+interface CommentReply {
+    articel?: {
+        id: string;
+        title: string;
+        url: string;
+    };
+    author?: {
+        id: string;
+        nickname: string;
+        avatarUrl?: string;
+        articelId: string;
+        url: string;
+        bio: string;
+    };
+}
+
+interface CommentPayload {
+    comment?: List;
+    list?: List[];
+    reply?: CommentReply;
+}
 
 interface CommentAction {
     type?: string;

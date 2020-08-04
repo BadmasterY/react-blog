@@ -149,6 +149,9 @@ i18n
                     'Publish articles': '发表文章',
                     'Manage users and articles.': '管理用户与文章。',
                     'The password is 6 to 18 digits long and contains only numbers, letters and underscores!': '密码长度应当为6-18位, 仅包含数字、字母和下划线!',
+                    'Reply to': '回复',
+                    'Share': '分享',
+                    'Please input reply!': '请检查回复内容是否已输入!',
                 }
             },
             'en': {

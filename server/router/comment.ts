@@ -16,6 +16,7 @@ const router = new Router();
 
 router.post('/addComment', async (ctx, next) => {
     const comment: Comments = ctx.request.body;
+    if(comment.replyId === '') delete comment.replyId;
 
     console.log(`[Comment] ${getDate()} addComment`);
 
@@ -62,6 +63,14 @@ router.post('/getComments', async (ctx, next) => {
                     localField: "authorId",
                     foreignField: "_id",
                     as: "author",
+                }
+            },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "replyId",
+                    foreignField: "_id",
+                    as: "replier",
                 }
             }
         ]).then(result => {

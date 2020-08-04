@@ -32,6 +32,8 @@ const settingPromise = import('../Setting/Setting');
 const Setting = lazy(() => settingPromise);
 const articlePromise = import('../Article/Article');
 const Article = lazy(() => articlePromise);
+const reply = import('../Reply/Reply');
+const Reply = lazy(() => reply);
 
 const { Content } = Layout;
 
@@ -89,6 +91,7 @@ function App() {
           <Route exact strict path="/management/*" children={props => Animation(<System />, props, '/management/*')} />
           <Route path="*" children={props => Animation(<NotFound />, props, '/404')} />
         </Switch>
+        <Reply />
       </Suspense>
     </>
   );
