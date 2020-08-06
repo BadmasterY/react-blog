@@ -152,6 +152,8 @@ i18n
                     'Reply to': '回复',
                     'Share': '分享',
                     'Please input reply!': '请检查回复内容是否已输入!',
+                    'Go to the first review!': '快去抢沙发!',
+                    'Write a story about you!': '写个故事吧!',
                 }
             },
             'en': {

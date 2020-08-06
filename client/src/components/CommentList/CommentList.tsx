@@ -1,7 +1,7 @@
 import React from 'react';
 import { List, Comment, Avatar, Popover, Tag } from 'antd';
 import { useDispatch } from 'react-redux';
-import { LinkOutlined, RollbackOutlined } from '@ant-design/icons';
+import { LinkOutlined, RollbackOutlined, FormOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useHistory } from 'react-router';
 
@@ -70,6 +70,13 @@ function CommentList(props: Props) {
                 dataSource={comments}
                 header={`${comments.length} ${comments.length > 1 ? t('replies') : t('reply')}`}
                 itemLayout="horizontal"
+                locale={{
+                    emptyText: <div>
+                        <div><FormOutlined style={{ fontSize: '48px' }} /></div>
+                        {t('Go to the first review!')}
+                    </div>,
+
+                }}
                 renderItem={({ author, avatar, content, datetime, replier }) => {
                     return (<Comment
                         author={author[0].nickname}

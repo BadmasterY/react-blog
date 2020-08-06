@@ -16,6 +16,8 @@ import './article.css';
 
 const { Title } = Typography;
 
+const pathNameRegexp = /article/;
+
 function Article() {
     const [isLoading, setLoading] = useState(true);
     const { title, content, author, createTime, updatedAt } = useSelector((item: reduxState) => item.article);
@@ -72,11 +74,12 @@ function Article() {
     }
 
     useEffect(() => {
-        if (isLoading) {
-            const { search } = history.location;
+        const { pathname, search } = history.location;
+        if (pathNameRegexp.test(pathname)) {
+            setLoading(true);
             getArticle(search);
         }
-    });
+    }, [history.location.pathname]);
 
     return (
         <Spin tip="Loading..." spinning={isLoading}>
@@ -100,6 +103,7 @@ function Article() {
                                     return <Title key={index} level={item.data.level}>{item.data.text}</Title>;
                                 case 'image':
                                     return <img
+                                        alt={item.data.caption}
                                         key={index}
                                         src={item.data.file.url}
                                         className={
@@ -143,7 +147,6 @@ function Article() {
                 </Typography>
                 <p className="article-time">{t('CreateTime')}: {createTime ? new Date(createTime).toLocaleString() : ''}</p>
                 <p className="article-time">{t('UpdatedAt')}: {updatedAt ? new Date(updatedAt).toLocaleString() : ''}</p>
-                <Divider />
                 <Comment />
                 <Divider />
                 <Row gutter={[8, 8]}>

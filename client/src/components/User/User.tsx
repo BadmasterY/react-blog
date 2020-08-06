@@ -130,12 +130,16 @@ function User() {
                                 <div className="user-content">
                                     <Row gutter={[16, 16]}>
                                         <Col xs={24} sm={24} md={12} xxl={6}>
-                                            <Card>
+                                            <Card
+                                                hoverable
+                                            >
                                                 <Statistic title={t("Articles")} value={articles} />
                                             </Card>
                                         </Col>
                                         <Col xs={24} sm={24} md={12} xxl={6}>
-                                            <Card>
+                                            <Card
+                                                hoverable
+                                            >
                                                 <Statistic title={t('Comments')} value={comments} />
                                             </Card>
                                         </Col>

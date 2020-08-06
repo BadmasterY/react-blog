@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import EditorJs from 'react-editor-js';
+import { useTranslation } from 'react-i18next';
 
 import { EditorProps } from '../../interfaces/editor';
 
@@ -11,6 +12,7 @@ function Editor(props: EditorProps) {
     const { needUpdate, data, onReady, onChange, onUpdated } = props;
 
     const [enableReInitialize, setEnableReInitialize] = useState(needUpdate);
+    const { t } = useTranslation();
 
     useEffect(() => {
         setEnableReInitialize(false);
@@ -30,7 +32,7 @@ function Editor(props: EditorProps) {
         tools={EditorTools}
         i18n={i18nEditor}
         autofocus={true}
-        placeholder="Write a story about you!"
+        placeholder={`${t('Write a story about you!')}`}
         data={data}
     // logLevel={LogLevels.ERROR}
     />;

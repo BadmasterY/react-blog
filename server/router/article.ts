@@ -128,6 +128,7 @@ router.post('/getArticle', async (ctx, next) => {
 
     const response: Response = { error: 1 };
 
+    // 清理评论 author 与 replier 信息
     const commentsResult = await comments.aggregate([
         { $match: { removed: 0, articleId: toObjectId(id) } },
         {

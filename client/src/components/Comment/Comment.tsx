@@ -9,11 +9,10 @@ import './comment.css';
 
 function MyComment() {
     const { list } = useSelector((item: reduxState) => item.comment);
-    console.log(list);
 
     return (
         <div className="comment">
-            {list.length > 0 && <List comments={list} />}
+            <List comments={list} />
         </div>
     );
 }
