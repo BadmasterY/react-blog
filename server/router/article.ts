@@ -68,6 +68,7 @@ router.post('/getArticleList', async (ctx, next) => {
 
         if (length > 0) {
             await articles.aggregate([
+                { $sort: { createTime: -1 } },
                 { $match: { removed: 0, ...query } },
                 { $skip: skip },
                 { $limit: pageSize },

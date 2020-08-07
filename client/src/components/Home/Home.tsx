@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Skeleton, List, Tooltip, Typography, message } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
+import { Skeleton, List, Tooltip, Typography, Row, Col, message } from 'antd';
+import { UserOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import axois from 'axios';
@@ -16,14 +16,13 @@ const articales: ArticleItem[] = [];
 
 function Home() {
     const [loading, setLoading] = useState(true);
-    const [isInitial, setInitial] = useState(true);
     const [dataSource, setData] = useState(articales);
     const [maxLength, setMaxLength] = useState(0);
     const [initialPage, setPage] = useState(1);
     const { t } = useTranslation();
 
     async function initialData() {
-        setInitial(false);
+        setLoading(true);
 
         await axois.post('/article/getArticleList', {
             page: initialPage,
@@ -57,8 +56,8 @@ function Home() {
     }
 
     useEffect(() => {
-        if (isInitial) initialData();
-    });
+        initialData();
+    }, [initialPage, pageSize]);
 
     return (
         <div className="home">
@@ -84,25 +83,35 @@ function Home() {
                         >
                             <List.Item.Meta
                                 // avatar={<Avatar size="large">{item.author.nickname}</Avatar>}
-                                title={<Link
-                                    className="home-title"
-                                    to={`/article/${item.title}?article_id=${item._id}`}
-                                >
-                                    {item.title}
-                                </Link>
+                                title={
+                                    <Link
+                                        className="home-title"
+                                        to={`/article/${item.title}?article_id=${item._id}`}
+                                    >
+                                        {item.title}
+                                    </Link>
                                 }
-                                description={<p className="home-description">
-                                    <Tooltip placement="right" title={<div className="description-tooltip">
-                                        <p>{item.author.nickname}</p>
-                                        <p className="tooltip-bio">{item.author.bio}</p>
-                                    </div>}>
-                                        <span><UserOutlined /> {item.author.nickname}</span>
-                                    </Tooltip>
-                                </p>}
+                                description={
+                                    <p className="home-description">
+                                        <Row>
+                                            <Col span={24}>
+                                                <span><ClockCircleOutlined /> {new Date(item.createTime).toLocaleString()}</span>
+                                            </Col>
+                                            <Col span={24}>
+                                                <Tooltip placement="right" title={<div className="description-tooltip">
+                                                    <p>{item.author.nickname}</p>
+                                                    <p className="tooltip-bio">{item.author.bio}</p>
+                                                </div>}>
+                                                    <span><UserOutlined /> {item.author.nickname}</span>
+                                                </Tooltip>
+                                            </Col>
+                                        </Row>
+                                    </p>}
+
                             />
                             <Paragraph
                                 ellipsis={{
-                                    rows: 5,
+                                    rows: 2,
                                     expandable: true,
                                     symbol: <></>,
                                 }}
