@@ -30,19 +30,18 @@ router.post('/getGroups', async (ctx, next) => {
             maxLength: groupList.length,
         }
 
-        await groups.findAll(
+        await groups.findAll<Groups>(
             { removed: 0, ...query },
             null,
             { skip: skipSize, limit: pageSize }
         ).then(result => {
-            const data: Groups[] = result;
             const tempArr: ResponseGroupList[] = [];
 
-            for (let i = 0; i < data.length; i++) {
+            for (let i = 0; i < result.length; i++) {
                 tempArr.push({
-                    id: data[i]._id || '',
-                    name: data[i].name,
-                    useState: data[i].useState,
+                    id: result[i]._id || '',
+                    name: result[i].name,
+                    useState: result[i].useState,
                 });
             }
 
@@ -135,8 +134,8 @@ router.post('/getGroupList', async (ctx, next) => {
 
     const response: Response = { error: 1 };
 
-    await groups.findAll({ removed: 0, useState: 1 }, 'name')
-        .then((result: GetGroupListResult[]) => {
+    await groups.findAll<GetGroupListResult>({ removed: 0, useState: 1 }, 'name')
+        .then(result => {
             const grouplist = [];
 
             for(let i = 0; i < result.length; i++) {

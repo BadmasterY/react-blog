@@ -63,13 +63,13 @@ class Dao {
      * @param {Object | String} projection 可选, 要返回的字段, 默认 null
      * @param {Object} options 可选, 选项, 默认 {}
      */
-    findAll(filter = {}, projection: null | string = null, options = {}): Promise<any[]> {
+    findAll<T>(filter = {}, projection: null | string = null, options = {}): Promise<T[]> {
         return new Promise((resolve, reject) => {
             // find 方法获取数据
             // 详情: https://mongoosejs.com/docs/api/model.html#model_Model.find
             this.Model.find(filter, projection, options, (err: Error, result) => {
                 if (!err) {
-                    resolve(result);
+                    resolve((result as any[]));
                 } else {
                     reject(err);
                 }
@@ -83,14 +83,14 @@ class Dao {
      * @param {Object | String} projection 可选, 要返回的字段, 默认 null
      * @param {Object} options 可选, 选项, 默认 {}
      */
-    findOne(filter: object, projection = null, options = {}): Promise<any> {
+    findOne<T>(filter: object, projection = null, options = {}): Promise<T> {
         if (!filter) throw new Error(`Paramer 'filter' not found.`);
         return new Promise((resolve, reject) => {
             // 使用 findOne 方法查找第一条匹配数据
             // 详情: https://mongoosejs.com/docs/api/model.html#model_Model.findOne
             this.Model.findOne(filter, projection, options, (err: Error, result) => {
                 if (!err) {
-                    resolve(result);
+                    resolve((result as any));
                 } else {
                     reject(err);
                 }
@@ -143,7 +143,7 @@ class Dao {
      * @param {Object} filter 可选, 匹配条件, 如果不输入将匹配所有, 默认 {}
      * @param {Object} options 可选, 选项, 默认 {}
      */
-    deleteMany(filter = {}, options = {}): Promise<any> {
+    deleteMany(filter = {}, options = {}): Promise<void> {
         return new Promise((resolve, reject) => {
             // 使用 deleteMany 进行删除
             // 详情: https://mongoosejs.com/docs/api/model.html#model_Model.deleteMany
@@ -162,7 +162,7 @@ class Dao {
      * @param {Object} filter 可选, 匹配条件, 如果不输入将匹配所有, 默认 {}
      * @param {Object} options 可选, 选项, 默认 {}
      */
-    deleteOne(filter = {}, options = {}): Promise<any> {
+    deleteOne(filter = {}, options = {}): Promise<void> {
         return new Promise((resolve, reject) => {
             // 使用 deleteOne 进行删除
             // 详情: https://mongoosejs.com/docs/api/model.html#model_Model.deleteOne

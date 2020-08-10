@@ -46,9 +46,11 @@ router.post('/getComments', async (ctx, next) => {
 
     const response: Response = { error: 1 };
 
-    const allResult = await comments.findAll({ removed: 0, ...query });
+    const allResult = await comments.findAll<Comments>({ removed: 0, ...query }).catch(err => {
+        console.log(`[Comment] ${getDate()} getComments Error:`, err);
+    });
 
-    if (dataType(allResult) === 'Array') {
+    if (Array.isArray(allResult)) {
         response.content = {
             maxLength: allResult.length,
         };
@@ -73,16 +75,15 @@ router.post('/getComments', async (ctx, next) => {
                     as: "replier",
                 }
             }
-        ]).then(result => {
-                const commentArr = (result as GetCommentsResult[]);
+        ]).then((result: GetCommentsResult[]) => {
                 const comments: GetCommentsResponse[] = [];
 
-                for(let i = 0; i < commentArr.length; i++) {
-                    comments[i] = Object.assign({}, commentArr[i], {
-                        id: commentArr[i]._id,
+                for(let i = 0; i < result.length; i++) {
+                    comments[i] = Object.assign({}, result[i], {
+                        id: result[i]._id,
                         author: {
-                            id: commentArr[i].authorId,
-                            nickname: commentArr[i].author[0].nickname,
+                            id: result[i].authorId,
+                            nickname: result[i].author[0].nickname,
                         }
                     });
                 }

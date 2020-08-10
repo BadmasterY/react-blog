@@ -57,9 +57,14 @@ router.post('/getArticleList', async (ctx, next) => {
 
     const response: Response = { error: 1 };
 
-    const allResult = await articles.findAll({ removed: 0, ...query });
-    if (dataType(allResult) === 'Array') {
-        const { length } = (allResult as Articles[]);
+    const allResult = await articles.findAll<Articles>({ removed: 0, ...query }).catch(err => {
+        console.error(`[Article] ${getDate()} getArticleList Error:`, err);
+        response.msg = '服务器异常!';
+        ctx.response.body = response;
+        return;
+    });
+    if (Array.isArray(allResult)) {
+        const { length } = allResult;
 
         response.error = 0;
         response.content = {
@@ -80,12 +85,11 @@ router.post('/getArticleList', async (ctx, next) => {
                         as: "author",
                     }
                 }
-            ]).then(result => {
-                const getResult = (result as GetResult[]);
+            ]).then((result: GetResult[]) => {
                 const resResult: GetResponse[] = [];
-                for (let i = 0; i < getResult.length; i++) {
-                    const { nickname, username, bio, url, avatarUrl } = getResult[i].author[0];
-                    let res: GetResponse = Object.assign({}, getResult[i], {
+                for (let i = 0; i < result.length; i++) {
+                    const { nickname, username, bio, url, avatarUrl } = result[i].author[0];
+                    let res: GetResponse = Object.assign({}, result[i], {
                         author: {
                             bio,
                             url,
@@ -161,13 +165,11 @@ router.post('/getArticle', async (ctx, next) => {
             }
         },
     ])
-        .then(result => {
-            const getResult = (result as GetResult[]);
-
-            if (getResult.length === 1) {
+        .then((result: GetResult[]) => {
+            if (result.length === 1) {
                 response.error = 0;
-                const { nickname, username, bio, avatarUrl, url } = getResult[0].author[0];
-                const res: GetResponse = Object.assign({}, getResult[0], {
+                const { nickname, username, bio, avatarUrl, url } = result[0].author[0];
+                const res: GetResponse = Object.assign({}, result[0], {
                     author: {
                         bio,
                         url,
@@ -178,7 +180,7 @@ router.post('/getArticle', async (ctx, next) => {
                     comments: commentsResult,
                 });
                 response.content = res;
-            } else if (getResult.length === 0) {
+            } else if (result.length === 0) {
                 response.msg = '未找到该文章!';
             } else {
                 response.msg = '获取文章异常!';
@@ -205,11 +207,17 @@ router.post('/getArticles', async (ctx, next) => {
 
     const response: Response = { error: 1 };
 
-    const allResult = await articles.findAll({ removed: 0, ...query });
+    const allResult = await articles.findAll<Articles>({ removed: 0, ...query }).catch(err => {
+        console.error(`[Article] ${getDate()} getArticles Error:`, err);
+        response.msg = '服务器异常!';
+        ctx.response.body = response;
+        return;
+    });
 
-    response.content = {
-        maxLength: allResult.length,
-    };
+    if (allResult)
+        response.content = {
+            maxLength: allResult.length,
+        };
 
     await articles.aggregate([
         { $match: { removed: 0 } },
@@ -223,12 +231,11 @@ router.post('/getArticles', async (ctx, next) => {
                 as: "author",
             }
         }
-    ]).then(result => {
-        const articlesArr = (result as GetArticlesResult[]);
+    ]).then((result: GetArticlesResult[]) => {
         const content: GetArticlesResponse[] = [];
 
-        for (let i = 0; i < articlesArr.length; i++) {
-            const item = articlesArr[i];
+        for (let i = 0; i < result.length; i++) {
+            const item = result[i];
             content.push({
                 id: item._id,
                 title: item.title,
@@ -260,7 +267,7 @@ router.post('/deletArticle', async (ctx, next) => {
     const response: Response = { error: 1 };
 
     await articles.updateOne({ _id: id }, { removed: 1 }).then(result => {
-        const { ok } = (result as { ok: number });
+        const { ok } = result;
 
         if (ok === 1) {
             response.error = 0;
@@ -280,7 +287,7 @@ router.post('/getArticlesLength', async (ctx, next) => {
 
     const response: Response = { error: 1 };
 
-    await articles.findAll({ removed: 0 }).then(result => {
+    await articles.findAll<Articles>({ removed: 0 }).then(result => {
         response.error = 0;
         response.content = {
             length: result.length,

@@ -8,7 +8,7 @@ import { toObjectId } from '../db/base/Plugin';
 
 import { getDate, dataType, mkdirsSync, delDirSync } from '../utils/util';
 import { Response } from '../interfaces/response';
-import { Users, Groups, Settings } from '../interfaces/models';
+import { Users, Groups, Settings, Articles, Comments } from '../interfaces/models';
 import {
     List as UserList,
     RegisterRequest as Register,
@@ -109,7 +109,7 @@ router.post('/update', async (ctx, next) => {
 router.post('/register', async (ctx, next) => {
     const register: Register = ctx.request.body;
     const { username } = register;
-    const position = (await groups.findOne({ name: '游客' })) as Groups;
+    const position = await groups.findOne<Groups>({ name: '游客' });
     const user: Users = Object.assign({
         url: '',
         bio: '',
@@ -123,7 +123,7 @@ router.post('/register', async (ctx, next) => {
 
     const response: Response = { error: 1 };
 
-    const settingResult: Settings = await settings.findOne({});
+    const settingResult = await settings.findOne<Settings>({});
     const { isUseRegister } = settingResult;
 
     if (!isUseRegister) {
@@ -160,10 +160,10 @@ router.post('/resetPassword', async (ctx, next) => {
 
     const response: Response = { error: 1 };
 
-    const findResult = await users.findOne({ _id: id });
+    const findResult = await users.findOne<Users>({ _id: id });
 
     if (findResult) {
-        const { password } = (findResult as Users);
+        const { password } = findResult;
         if (password === oldpass) {
             const updateResult = await users.updateOne({ _id: id }, { password: newpass });
 
@@ -202,10 +202,10 @@ router.post('/getUserList', async (ctx, next) => {
 
     const response: Response = { error: 1 };
 
-    const allResult = await users.findAll({ removed: 0, ...query });
-    if (dataType(allResult) === 'Array') {
+    const allResult = await users.findAll<Users>({ removed: 0, ...query });
+    if (Array.isArray(allResult)) {
         response.content = {
-            maxLength: (allResult as Users[]).length,
+            maxLength: allResult.length,
         }
 
         await users.aggregate([
@@ -312,10 +312,10 @@ router.post('/getUserInfo', async (ctx, next) => {
 
     const response: Response = { error: 1 };
 
-    const articleResult = await articles.findAll({ removed: 0, authorId: id });
-    const commentResult = await comments.findAll({ removed: 0, authorId: id });
+    const articleResult = await articles.findAll<Articles>({ removed: 0, authorId: id });
+    const commentResult = await comments.findAll<Comments>({ removed: 0, authorId: id });
 
-    if (dataType(articleResult) === 'Array' && dataType(commentResult) === 'Array') {
+    if (Array.isArray(articleResult) && Array.isArray(commentResult)) {
         response.error = 0;
         response.content = {
             articles: articleResult.length,
@@ -415,7 +415,7 @@ router.post('/addUser', async (ctx, next) => {
 
     const response: Response = { error: 1 };
 
-    const findItem = await users.findOne({ username }).catch(err => {
+    const findItem = await users.findOne<Users>({ username }).catch(err => {
         response.msg = '服务器异常, 请稍后重试!';
         console.log(`[User] ${getDate()} addUser Error:`, err);
     });
