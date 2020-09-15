@@ -4,7 +4,7 @@ import { Model, Error, Document, MongooseDocument } from "mongoose";
  * Dao 
  * 这里为基础类, 一个面向对象的数据库接口
  */
-class Dao{
+class Dao {
 
     Model: Model<Document>;
 
@@ -12,10 +12,10 @@ class Dao{
      * 需要创建好的模型
      */
     constructor(model: Model<Document>) {
-        if(!model) throw new Error(`Paramer 'model' not found.`);
+        if (!model) throw new Error(`Paramer 'model' not found.`);
         this.Model = model;
     }
-    
+
     /**
      * 创建数据,
      * 使用 model.create()
@@ -27,7 +27,7 @@ class Dao{
             // 调用模型上的 create 方法, 实际触发 save 中间件
             // 详情: https://mongoosejs.com/docs/api/model.html#model_Model.create
             this.Model.create(newModel, (err: Error, result: any) => {
-                if(!err) {
+                if (!err) {
                     resolve(result);
                 } else {
                     reject(err);
@@ -47,7 +47,7 @@ class Dao{
             // 触发 prototype.save 方法
             // 详情: https://mongoosejs.com/docs/api/model.html#model_Model-save
             newModel.save((err, result) => {
-                if(!err) {
+                if (!err) {
                     resolve(result);
                 } else {
                     reject(err);
@@ -63,13 +63,13 @@ class Dao{
      * @param {Object | String} projection 可选, 要返回的字段, 默认 null
      * @param {Object} options 可选, 选项, 默认 {}
      */
-    findAll(filter = {}, projection: null | string = null, options = {}): Promise<any[]> {
+    findAll<T>(filter = {}, projection: null | string = null, options = {}): Promise<T[]> {
         return new Promise((resolve, reject) => {
             // find 方法获取数据
             // 详情: https://mongoosejs.com/docs/api/model.html#model_Model.find
             this.Model.find(filter, projection, options, (err: Error, result) => {
-                if(!err) {
-                    resolve(result);
+                if (!err) {
+                    resolve((result as any[]));
                 } else {
                     reject(err);
                 }
@@ -83,14 +83,14 @@ class Dao{
      * @param {Object | String} projection 可选, 要返回的字段, 默认 null
      * @param {Object} options 可选, 选项, 默认 {}
      */
-    findOne(filter: object, projection = null, options = {}): Promise<any> {
-        if(!filter) throw new Error(`Paramer 'filter' not found.`);
+    findOne<T>(filter: object, projection = null, options = {}): Promise<T> {
+        if (!filter) throw new Error(`Paramer 'filter' not found.`);
         return new Promise((resolve, reject) => {
             // 使用 findOne 方法查找第一条匹配数据
             // 详情: https://mongoosejs.com/docs/api/model.html#model_Model.findOne
             this.Model.findOne(filter, projection, options, (err: Error, result) => {
-                if(!err) {
-                    resolve(result);
+                if (!err) {
+                    resolve((result as any));
                 } else {
                     reject(err);
                 }
@@ -109,7 +109,7 @@ class Dao{
             // 使用 updateMany 进行更新
             // 详情: https://mongoosejs.com/docs/api/model.html#model_Model.updateMany
             this.Model.updateMany(filter, doc, options, (err: Error, result) => {
-                if(!err) {
+                if (!err) {
                     resolve(result);
                 } else {
                     reject(err);
@@ -124,12 +124,12 @@ class Dao{
      * @param {Object} doc 可选, 更新内容, 默认 {}
      * @param {Object} options 可选, 选项, 默认 {}
      */
-    updateOne(filter = {}, doc = {}, options = {}): Promise<{ok: number}> {
+    updateOne(filter = {}, doc = {}, options = {}): Promise<{ ok: number }> {
         return new Promise((resolve, reject) => {
             // 使用 updateOne 进行更新
             // 详情: https://mongoosejs.com/docs/api/model.html#model_Model.updateOne
             this.Model.updateOne(filter, doc, options, (err: Error, result) => {
-                if(!err) {
+                if (!err) {
                     resolve(result);
                 } else {
                     reject(err);
@@ -143,12 +143,12 @@ class Dao{
      * @param {Object} filter 可选, 匹配条件, 如果不输入将匹配所有, 默认 {}
      * @param {Object} options 可选, 选项, 默认 {}
      */
-    deleteMany(filter = {}, options = {}): Promise<any> {
+    deleteMany(filter = {}, options = {}): Promise<void> {
         return new Promise((resolve, reject) => {
             // 使用 deleteMany 进行删除
             // 详情: https://mongoosejs.com/docs/api/model.html#model_Model.deleteMany
             this.Model.deleteMany(filter, options, (err: Error) => {
-                if(!err) {
+                if (!err) {
                     resolve();
                 } else {
                     reject(err);
@@ -162,12 +162,12 @@ class Dao{
      * @param {Object} filter 可选, 匹配条件, 如果不输入将匹配所有, 默认 {}
      * @param {Object} options 可选, 选项, 默认 {}
      */
-    deleteOne(filter = {}, options = {}): Promise<any> {
+    deleteOne(filter = {}, options = {}): Promise<void> {
         return new Promise((resolve, reject) => {
             // 使用 deleteOne 进行删除
             // 详情: https://mongoosejs.com/docs/api/model.html#model_Model.deleteOne
             this.Model.deleteOne(filter, options, (err: Error) => {
-                if(!err) {
+                if (!err) {
                     resolve();
                 } else {
                     reject(err);
@@ -186,7 +186,7 @@ class Dao{
             // 使用 $lookup
             // 详情: http://www.mongoosejs.net/docs/api.html#Aggregate
             this.Model.aggregate(aggregations, (err: Error, result: any) => {
-                if(!err) {
+                if (!err) {
                     resolve(result);
                 } else {
                     reject(err);

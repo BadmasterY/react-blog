@@ -7,7 +7,6 @@ interface AddBasicProps {
 }
 
 interface AddUserProps extends AddBasicProps {
-    initpass: string;
 }
 
 interface AddUserFormResult {

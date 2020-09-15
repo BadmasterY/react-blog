@@ -1,8 +1,10 @@
+import { OutputData } from "@editorjs/editorjs";
+
 interface ArticaleState {
     _id: string;
     authorId: string;
     title: string;
-    content: string; // TODO => json
+    content: OutputData;
     author: {
         url: string;
         bio: string;

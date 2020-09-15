@@ -1,0 +1,19 @@
+.reply-from {
+    margin-top: 10px;
+}
+
+.reply-avatar {
+    margin-right: 8px;
+}
+
+.reply-icons {
+    width           : 32px;
+    height          : 32px;
+    line-height     : 32px;
+    margin-right    : 8px;
+    background-color: #fafafa;
+}
+
+.reply-textarea {
+    resize: none;
+}

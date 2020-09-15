@@ -20,11 +20,9 @@ router.post('/getSetting', async (ctx, next) => {
 
     const response: Response = { error: 1 };
 
-    await settings.findAll().then(result => {
-        const settingArr: Settings[] = result;
-
-        if(settingArr.length === 1) {
-            const setting: Settings = settingArr[0];
+    await settings.findAll<Settings>().then(result => {
+        if(result.length === 1) {
+            const setting: Settings = result[0];
             const { isUseRegister, _id } = setting;
 
             response.error = 0;
@@ -34,7 +32,7 @@ router.post('/getSetting', async (ctx, next) => {
             };
         }else {
             response.msg = '服务器异常!';
-            console.log(`[System] ${getDate()} getSetting Error: setting length is ${settingArr.length}`);
+            console.log(`[System] ${getDate()} getSetting Error: setting length is ${result.length}`);
         }
     }).catch(err => {
         response.msg = '服务器异常!';

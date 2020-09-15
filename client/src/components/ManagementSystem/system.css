@@ -4,6 +4,12 @@
     overflow: hidden;
 }
 
+.system-loading {
+    width: 100%;
+    padding: 30px 10px;
+    text-align: center;
+}
+
 .system-content {
     overflow-x: hidden;
     overflow-y: auto;
@@ -28,4 +34,10 @@
     background-color: rgba(255, 255, 255, 0.5);
     color: #000;
     top: 0;
+}
+
+@media screen and (max-width: 576px) {
+    .system-content {
+        padding: 3px;
+    }
 }

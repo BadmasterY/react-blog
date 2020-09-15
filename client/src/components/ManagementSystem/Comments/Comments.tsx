@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Row, Col, Button, Tooltip, message } from 'antd';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 import { system } from '../../../config/default.json';
@@ -17,6 +18,7 @@ function Comments() {
     const [dataSource, setData] = useState(initialData);
     const [initialPage, setPage] = useState(1);
     const [total, setTotal] = useState(0);
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (firstLoad) loadComments(initialPage, initialPageSize);
@@ -54,7 +56,7 @@ function Comments() {
                 setData(data);
             }
         }).catch(err => {
-            message.error('Please check network!');
+            message.error(t('Please check network!'));
             console.log(err);
         });
     }
@@ -87,27 +89,33 @@ function Comments() {
             setPage(newPage);
             loadComments(newPage, initialPageSize);
         }).catch(err => {
-            message.error('Please check network!');
+            message.error(t('Please check network!'));
             console.log(err);
         })
     }
 
     const initialColumns = [
-        columns.content,
         {
-            ...columns.author,
+            ...columns.content,
+            title: t(columns.content.title),
+        },
+        {
+            title: t(columns.author.title),
+            dataIndex: columns.author.dataIndex,
             render: (text: any, record: CommentsItem) => <Tooltip title={record.author.id}><span>{record.author.nickname}</span></Tooltip>,
         },
         {
-            ...columns.createTime,
+            title: t(columns.createTime.title),
+            dataIndex: columns.createTime.dataIndex,
             render: (text: any, record: CommentsItem) => <span>{new Date(record.createTime).toLocaleString()}</span>,
         },
         {
-            ...columns.updatedAt,
+            title: t(columns.updatedAt.title),
+            dataIndex: columns.updatedAt.dataIndex,
             render: (text: any, record: CommentsItem) => <span>{new Date(record.updatedAt).toLocaleString()}</span>,
         },
         {
-            title: "Action",
+            title: t("Action"),
             key: "action",
             render: (text: any, record: CommentsItem) => {
                 return (<Row gutter={[6, 6]}>
@@ -117,7 +125,7 @@ function Comments() {
                             onClick={() => {
                                 showDeleteFn(record, deleteOkFn);
                             }}
-                        >Delete</Button>
+                        >{t('Delete')}</Button>
                     </Col>
                 </Row>)
             },
@@ -130,13 +138,13 @@ function Comments() {
                 <Button type="primary" onClick={() => {
                     setLoadding(true);
                     loadComments(initialPage, initialPageSize);
-                }}>Refresh</Button>
+                }}>{t('Refresh')}</Button>
             </div>
             <Table
                 className="users-table"
                 loading={isLoading}
                 pagination={{
-                    position: 'bottomRight',
+                    position: ['bottomRight'],
                     current: initialPage,
                     pageSize: initialPageSize,
                     total,

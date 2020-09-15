@@ -1,14 +1,8 @@
 import mongoose from 'mongoose';
 import { Dao } from './Dao'
-import { Groups } from '../../interfaces/models';
 import { md5 } from '../../utils/md5';
 
-import config from 'config';
-
-import { InitDB, Setting } from '../../interfaces/config';
-
-const initConfig: InitDB = config.get('initDB');
-const settingConfig: Setting = config.get('systemSetting');
+import { INIT_DB, INIT_SYSTEM } from '../../config/config';
 
 /**
  * 转换为 objectId
@@ -47,11 +41,11 @@ async function onConectedFn(users: Dao, settings: Dao, groups: Dao) {
             username,
             password,
             position,
-        } = initConfig;
+        } = INIT_DB;
 
         const { _id } = await groups.findOne({ name: position });
 
-        await users.save(Object.assign({}, initConfig, { password: md5(password), position: _id }));
+        await users.save(Object.assign({}, INIT_DB, { password: md5(password), position: _id }));
 
         console.log(`[DB] Init username: ${username}`);
         console.log(`[DB] Init password: ${password}`);
@@ -60,11 +54,11 @@ async function onConectedFn(users: Dao, settings: Dao, groups: Dao) {
     if (settingResult.length === 0) {
         const {
             isUseRegister,
-        } = settingConfig;
+        } = INIT_SYSTEM;
 
         await settings.save({ isUseRegister });
 
-        console.log(`[DB] Init setting config...`, settingConfig);
+        console.log(`[DB] Init setting config...`, INIT_SYSTEM);
     }
 }
 

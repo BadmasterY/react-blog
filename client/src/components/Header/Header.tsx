@@ -2,6 +2,7 @@ import React from 'react';
 import { Layout, Menu, message } from 'antd';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 
 import { blogName, localName, header } from '../../config/default.json';
 import { reduxState } from '../../interfaces/state';
@@ -15,6 +16,7 @@ const { Header } = Layout;
 function MyHeader() {
     const { isLogin, nickname } = useSelector((state: reduxState) => state.user);
     const dispatch = useDispatch();
+    const { t, i18n } = useTranslation();
 
     function logout() {
         const action = actions.userLogout();
@@ -23,7 +25,7 @@ function MyHeader() {
         message.success('Logout success!');
 
         const localItem = localStorage.getItem(localName);
-        if(localItem !== null) {
+        if (localItem !== null) {
             const loginData: LoginData = JSON.parse(localItem);
             const { username, password } = loginData;
 
@@ -33,6 +35,12 @@ function MyHeader() {
                 isLogin: false,
             }));
         }
+    }
+
+    function changeLanguage() {
+        let lan = 'en';
+        if (i18n.language === 'en') lan = 'zh-CN';
+        i18n.changeLanguage(lan);
     }
 
     return (
@@ -48,7 +56,7 @@ function MyHeader() {
                     header.map(item => (
                         <Menu.Item key={item.key}>
                             <Link className="header-link" to={item.uri}>
-                                {item.name}
+                                {t(item.name)}
                             </Link>
                         </Menu.Item>
                     ))
@@ -67,18 +75,26 @@ function MyHeader() {
                             <Menu.Divider />
                             <Menu.Item key="setting">
                                 <Link className="header-link" to={'/setting'}>
-                                    Setting
+                                    {t('Setting')}
                                 </Link>
                             </Menu.Item>
                             <Menu.Divider />
                             <Menu.Item key="logout" onClick={logout}>
-                                Logout
+                                {t('Logout')}
+                            </Menu.Item>
+                            <Menu.Divider />
+                            <Menu.Item key="i18n">
+                                <a className="i18n-btn" onClick={changeLanguage}>
+                                    {
+                                        i18n.language === 'zh-CN' ? 'En' : '简'
+                                    }
+                                </a>
                             </Menu.Item>
                         </Menu.SubMenu>
                         :
                         <Menu.Item key="login">
                             <Link to="/login">
-                                LOGIN
+                                {t('LOGIN')}
                             </Link>
                         </Menu.Item>
                 }

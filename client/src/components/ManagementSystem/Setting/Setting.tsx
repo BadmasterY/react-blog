@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Switch, Button, Spin, message } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 import { reduxState } from '../../../interfaces/state';
@@ -19,6 +20,7 @@ function Setting() {
     const [isSelected, setSelected] = useState(isUseRegister);
     const [form] = Form.useForm();
     const dispatch = useDispatch();
+    const { t } = useTranslation();
 
     const initFormValue = {
         isUseRegister,
@@ -42,7 +44,7 @@ function Setting() {
                 setSelected(content.isUseRegister);
             }
         }).catch(err => {
-            message.error('Please check network!');
+            message.error(t('Please check network!'));
             console.log(err);
         });
     }
@@ -66,12 +68,12 @@ function Setting() {
                 return;
             }
 
-            message.success('Updated!');
+            message.success(t('Updated!'));
 
             const action = actions.settingUpdate(payload);
             dispatch(action);
         }).catch(err => {
-            message.error('Please check network!');
+            message.error(t('Please check network!'));
             console.log(err);
             setUpdate(false);
         });
@@ -94,18 +96,18 @@ function Setting() {
 
     return (
         <div className="system-setting">
-            <Spin tip="Loading..." spinning={isLoading}>
+            <Spin tip={t("Loadding...")} spinning={isLoading}>
                 <Form
                     form={form}
                     initialValues={initFormValue}
                     labelCol={{ span: 6 }}
                     wrapperCol={{ span: 18 }}
                 >
-                    <h3>Login and register</h3>
+                    <h3>{t('Login and register')}</h3>
                     <Form.Item
-                        label="Use register"
+                        label={t("Use register")}
                         name="isUseRegister"
-                        help="If you close, you will not be able to register on the web page."
+                        help={t("If you close, you will not be able to register on the web page.")}
                     >
                         <Switch checked={isSelected} onClick={selecteChange} />
                     </Form.Item>
@@ -113,7 +115,7 @@ function Setting() {
                         label=" "
                         colon={false}
                     >
-                        <Button type="primary" onClick={updateFn} loading={isUpdatting} >Update</Button>
+                        <Button type="primary" onClick={updateFn} loading={isUpdatting} >{t('Update')}</Button>
                     </Form.Item>
                 </Form>
             </Spin>

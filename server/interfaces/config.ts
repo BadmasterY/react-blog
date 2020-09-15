@@ -22,8 +22,8 @@ interface Server {
  * 数据库集合配置
  */
 interface DBReplocaSet {
-    name: string;
-    members: Array<{
+    name?: string;
+    members?: Array<{
         host: string;
         port: string;
     }>;
@@ -62,7 +62,7 @@ interface DB {
  * schema 配置
  */
 interface configSchema {
-    runSetterOnQuery: boolean;
+    // runSetterOnQuery: boolean;
     timestamps: {
         createdAt: string;
         updateAt: string;

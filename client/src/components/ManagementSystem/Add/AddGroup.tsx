@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Form, Button, Input, Switch, Modal } from 'antd';
+import { useTranslation } from 'react-i18next';
 
 import { AddProps } from '../../../interfaces/adds';
 
@@ -9,6 +10,7 @@ function AddGroup(props: AddProps) {
     const [isLoading, setLoading] = useState(false);
     const [isChecked, setChecked] = useState(true);
     const [form] = Form.useForm();
+    const { t } = useTranslation();
 
     const initialValues = { name: '', state: true };
 
@@ -27,7 +29,7 @@ function AddGroup(props: AddProps) {
     return (
         <Modal
             visible={modalVisible}
-            title={<span>Add</span>}
+            title={<span>{t('Add')}</span>}
             footer={null}
             onCancel={onCancel}
             children={
@@ -40,20 +42,20 @@ function AddGroup(props: AddProps) {
                 >
                     <Form.Item
                         key="name"
-                        label="Name"
+                        label={t("Name")}
                         name="name"
-                        rules={[{ required: true, message: 'Please input name!' }]}
+                        rules={[{ required: true, message: t('Please input name!') }]}
                     >
                         <Input
                             autoFocus={true}
                             className="add-modal-input"
-                            placeholder="Input name..."
+                            placeholder={t("Input name...")}
                             allowClear={true}
                         />
                     </Form.Item>
                     <Form.Item
                         key="state"
-                        label="State"
+                        label={t("State")}
                         name="state"
                     >
                         <Switch
@@ -75,7 +77,7 @@ function AddGroup(props: AddProps) {
                                 loadingNow();
                                 onClick(form, loaded);
                             }}
-                        >Add</Button>
+                        >{t('Add')}</Button>
                     </Form.Item>
                 </Form>
             }

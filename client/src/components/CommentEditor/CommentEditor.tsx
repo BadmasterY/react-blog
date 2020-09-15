@@ -1,6 +1,10 @@
 import React from 'react';
 import { Form, Button, Input } from 'antd';
+import { useSelector } from 'react-redux';
 import { FormInstance } from 'antd/lib/form';
+import { useTranslation } from 'react-i18next';
+
+import { reduxState } from '../../interfaces/state';
 
 import './commenteditor.css';
 
@@ -14,7 +18,9 @@ const { TextArea } = Input;
 function CommentEditor(props: Props) {
     const { isSubmitting, onSubmit } = props;
 
+    const { reply } = useSelector((item: reduxState) => item.comment);
     const [form] = Form.useForm();
+    const { t } = useTranslation();
 
     return (
         <Form
@@ -24,9 +30,10 @@ function CommentEditor(props: Props) {
         >
             <Form.Item
                 name="commentContent"
-                rules={[{ required: true, message: 'Please input comment!' }]}
+                rules={[{ required: true, message: t('Please input comment!') }]}
             >
                 <TextArea
+                    id="comment-textarea"
                     rows={4}
                 />
             </Form.Item>
@@ -39,7 +46,11 @@ function CommentEditor(props: Props) {
                     onClick={event => { onSubmit(form) }}
                     type="primary"
                     loading={isSubmitting}
-                >Add Comment</Button>
+                >
+                    {
+                        t('Add Comment')
+                    }
+                </Button>
             </Form.Item>
         </Form>
     );

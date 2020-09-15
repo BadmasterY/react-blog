@@ -1,15 +1,19 @@
 import React from 'react';
-import { List, Comment, Avatar, Popover } from 'antd';
-import { LinkOutlined } from '@ant-design/icons';
+import { List, Comment, Avatar, Popover, Tag } from 'antd';
+import { useDispatch } from 'react-redux';
+import { LinkOutlined, RollbackOutlined, FormOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
+import { useHistory } from 'react-router';
+
+import { actions } from '../../redux/ducks/comment';
 
 import './commentlist.css';
 
-//TODO 后端返回数据清理
 interface Props {
     comments: {
         authorId: string;
         author: {
-            id: string;
+            _id: string;
             nickname: string;
             avatarUrl?: string;
             url: string;
@@ -18,22 +22,72 @@ interface Props {
         avatar: string;
         content: string;
         datetime: string;
+        replyId?: string;
+        replier?: {
+            _id: string;
+            nickname: string;
+        }[];
     }[];
 }
 
 function CommentList(props: Props) {
     const { comments } = props;
 
+    const history = useHistory();
+    const dispatch = useDispatch();
+    const { t } = useTranslation();
+
+    function replyFn(author: {
+        _id: string;
+        nickname: string;
+        avatarUrl?: string;
+        url: string;
+        bio: string;
+    }) {
+        const { _id, nickname, avatarUrl, url, bio } = author;
+        const articelId = history.location.search.split('=')[1];
+        const replyAction = actions.commentSetReply({
+            reply: {
+                author: {
+                    id: _id,
+                    nickname,
+                    avatarUrl,
+                    url,
+                    bio,
+                    articelId,
+                }
+            },
+        });
+        dispatch(replyAction);
+        const isReplyAction = actions.commentSetIsReply();
+        dispatch(isReplyAction);
+    }
+
     return (
         <>
             <List
                 className="comment-list"
                 dataSource={comments}
-                header={`${comments.length} ${comments.length > 1 ? 'replies' : 'reply'}`}
+                header={`${comments.length} ${comments.length > 1 ? t('replies') : t('reply')}`}
                 itemLayout="horizontal"
-                renderItem={({ author, avatar, content, datetime }) => {
+                locale={{
+                    emptyText: <div>
+                        <div><FormOutlined style={{ fontSize: '48px' }} /></div>
+                        {t('Go to the first review!')}
+                    </div>,
+
+                }}
+                renderItem={({ author, avatar, content, datetime, replier }) => {
                     return (<Comment
                         author={author[0].nickname}
+                        actions={[
+                            <span
+                                onClick={() => { replyFn(author[0]) }}
+                                key="comment-list-reply-to-0"
+                            >
+                                <RollbackOutlined /> {t('Reply to')}
+                            </span>
+                        ]}
                         avatar={
                             <Popover style={{ maxWidth: '80px' }} placement="top" content={
                                 <div style={{ textAlign: 'center' }}>
@@ -62,8 +116,16 @@ function CommentList(props: Props) {
                                         :
                                         <Avatar >{avatar}</Avatar>
                                 }
-                            </Popover>}
-                        content={<p className="comment-content">{content}</p>}
+                            </Popover>
+                        }
+                        content={
+                            <p className="comment-content">
+                                {
+                                    replier && replier.length > 0 && <Tag>@{replier[0].nickname}</Tag>
+                                }
+                                {content}
+                            </p>
+                        }
                         datetime={datetime}
                     />);
                 }}

@@ -1,34 +1,28 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Layout, Menu } from 'antd';
-import MenuItem from 'antd/lib/menu/MenuItem';
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import { system } from '../../../config/default.json';
 
 import './sider.css';
 
 const { Sider } = Layout;
-const { menuList, initialSelectItem } = system;
+const { menuList } = system;
 
-interface SelectArguments {
-    key: string;
-    keyPath: string[];
-    item: MenuItem;
-    domEvent: any;
+interface MenuInfo {
+    key: React.Key;
+    keyPath: React.Key[];
+    item: React.ReactInstance;
+    domEvent: React.MouseEvent<HTMLElement>;
 }
 
-function SystemSider(props: { callback?: Function }) {
-    const { callback } = props;
-    const [initialSelect, setSelect] = useState(initialSelectItem);
-    const [collapsed, setCollapsed] = useState(true);
+function SystemSider(props: { initialSelectItem: string, callback?: Function }) {
+    const { callback, initialSelectItem } = props;
+    const { t } = useTranslation();
 
-    function changeSelect(select: SelectArguments) {
-        setSelect(select.key);
-
+    function changeSelect(select: MenuInfo) {
         if(callback !== undefined) callback(select.key);
-    }
-
-    function onCollapse(collapsed: boolean, type: string) {
-        setCollapsed(collapsed);
     }
 
     return (
@@ -36,19 +30,18 @@ function SystemSider(props: { callback?: Function }) {
             className="system-sider"
             breakpoint="md"
             collapsedWidth={0}
-            collapsed={collapsed}
             collapsible={true}
-            onCollapse={onCollapse}
         >
             <Menu
                 // theme='dark'
-                selectedKeys={[initialSelect]}
+                // selectedKeys={[initialSelectItem]}
+                selectable={false}
                 onClick={changeSelect}
             >
                 {
                     menuList.map((item) => (
                         <Menu.Item key={item.key}>
-                            {item.name}
+                            <Link to={`/management/${item.key}`}>{t(item.name)}</Link>
                         </Menu.Item>
                     ))
                 }

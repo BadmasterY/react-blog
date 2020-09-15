@@ -1,5 +1,6 @@
 interface SystemPayload {
-
+    articles?: number;
+    comments?: number;
 }
 
 interface SystemAction {
@@ -8,7 +9,10 @@ interface SystemAction {
 }
 
 interface SystemState {
+    VERSION: string;
     isLoading: boolean;
+    articles: number;
+    comments: number;
 }
 
 export type State = SystemState;

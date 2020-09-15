@@ -30,6 +30,7 @@ interface Comments extends modelBase {
     articleId: Schema.Types.ObjectId;
     content: string;
     authorId: Schema.Types.ObjectId;
+    replyId?: string;
     removed: number;
     datetime: string;
     avatar: string;

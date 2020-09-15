@@ -1,20 +1,13 @@
-import React, { useEffect } from 'react';
-import { Layout, BackTop } from 'antd';
+import React, { useEffect, lazy, Suspense } from 'react';
+import { Layout, BackTop, Spin } from 'antd';
 import { useSelector, useDispatch } from 'react-redux';
 import { Route, Switch, useHistory } from 'react-router-dom';
 
 import MyHeader from '../Header/Header';
 import MyFooter from '../Footer/Footer';
-import Home from '../Home/Home';
-import Login from '../Login/Login';
-import About from '../About/About';
-import Animation from '../Animation/Animation';
-import NotFound from '../NotFound/NotFound';
-import User from '../User/User';
-import Setting from '../Setting/Setting';
-import System from '../ManagementSystem/Index';
-import Article from '../Article/Article';
 import Loading from '../Loading/Loading';
+import NotFound from '../NotFound/NotFound';
+import Animation from '../Animation/Animation';
 
 import { reduxState } from '../../interfaces/state';
 import { Data as LoginData } from '../../interfaces/localstorage';
@@ -23,6 +16,24 @@ import { localName } from '../../config/default.json';
 import { actions } from '../../redux/ducks/system';
 
 import './index.css';
+
+// lazy
+const homePromise = import('../Home/Home');
+const Home = lazy(() => homePromise);
+const loginPromise = import('../Login/Login');
+const Login = lazy(() => loginPromise);
+const systemPromise = import('../ManagementSystem/Index');
+const System = lazy(() => systemPromise);
+const aboutPromise = import('../About/About');
+const About = lazy(() => aboutPromise);
+const userPromise = import('../User/User');
+const User = lazy(() => userPromise);
+const settingPromise = import('../Setting/Setting');
+const Setting = lazy(() => settingPromise);
+const articlePromise = import('../Article/Article');
+const Article = lazy(() => articlePromise);
+const reply = import('../Reply/Reply');
+const Reply = lazy(() => reply);
 
 const { Content } = Layout;
 
@@ -34,7 +45,7 @@ function App() {
   const dispatch = useDispatch();
 
   document.onreadystatechange = function () {
-    if(document.readyState === 'complete') {
+    if (document.readyState === 'complete') {
       const action = actions.systemLoaded();
       dispatch(action);
     }
@@ -55,28 +66,33 @@ function App() {
   return (
     <>
       <Loading style={{ opacity: isLoading ? 1 : 0 }} />
-      <Switch>
-        <Route exact strict path={['/', '/about', '/user', '/setting', '/article/*']}>
-          <Layout className="index">
-            <MyHeader />
-            <Content className="index-content">
-              <Route exact path="/" children={props => Animation(<Home />, props, '/')} />
-              <Route path="/about" children={props => Animation(<About />, props, '/about')} />
-              <Route path="/user" children={props => Animation(<User />, props, '/user')} />
-              <Route path="/setting" children={props => Animation(<Setting />, props, '/setting')} />
-              <Route path="/article/*" children={props => Animation(<Article />, props, '/article/*')} />
-            </Content>
-            <MyFooter />
-            <BackTop style={{
-              right: '10px',
-              bottom: '30px'
-            }} />
-          </Layout>
-        </Route>
-        <Route exact strict path="/login" children={props => Animation(<Login />, props, '/login')} />
-        <Route exact strict path="/system" children={props => Animation(<System />, props, '/system')} />
-        <Route path="*" children={props => Animation(<NotFound />, props, '/404')} />
-      </Switch>
+      <Suspense fallback={<div className="index-loading"><Spin /></div>}>
+        <Switch>
+          <Route exact strict path={['/', '/about', '/user', '/setting', '/article/*']}>
+            <Layout className="index">
+              <MyHeader />
+              <Content className="index-content">
+                <Suspense fallback={<div className="index-loading"><Spin /></div>}>
+                  <Route exact path="/" children={props => Animation(<Home />, props, '/')} />
+                  <Route path="/about" children={props => Animation(<About />, props, '/about')} />
+                  <Route path="/user" children={props => Animation(<User />, props, '/user')} />
+                  <Route path="/setting" children={props => Animation(<Setting />, props, '/setting')} />
+                  <Route path="/article/*" children={props => Animation(<Article />, props, '/article/*')} />
+                </Suspense>
+              </Content>
+              <MyFooter />
+              <BackTop style={{
+                right: '10px',
+                bottom: '30px'
+              }} />
+            </Layout>
+          </Route>
+          <Route exact strict path="/login" children={props => Animation(<Login />, props, '/login')} />
+          <Route exact strict path="/management/*" children={props => Animation(<System />, props, '/management/*')} />
+          <Route path="*" children={props => Animation(<NotFound />, props, '/404')} />
+        </Switch>
+        <Reply />
+      </Suspense>
     </>
   );
 }

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { Avatar, Upload, Form, Input, Button, message } from 'antd';
 import { EditOutlined } from '@ant-design/icons'
 import { RcFile } from 'antd/lib/upload';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 import { Action, Payload } from '../../interfaces/user';
@@ -23,6 +24,7 @@ function Setting() {
     const [form] = Form.useForm();
     const [isUpdate, setUpdate] = useState(false);
     const dispacth = useDispatch();
+    const { t } = useTranslation();
 
     const initFormValue = {
         nickname,
@@ -44,15 +46,15 @@ function Setting() {
                 }
                 const action: Action = actions.userUpdate(pyload);
                 dispacth(action);
-                message.success('Updated!');
+                message.success(t('Updated!'));
             }).catch(err => {
                 setUpdate(false);
-                message.error('Update error!');
+                message.error(t('Update error!'));
             });
 
         }).catch(err => {
             setUpdate(false);
-            message.error('Please check input!');
+            message.error(t('Please check input!'));
             console.log(err);
         });
     }
@@ -61,14 +63,14 @@ function Setting() {
         const isJPGorPNG = file.type === 'image/jpeg' || file.type === 'image/png';
 
         if (!isJPGorPNG) {
-            message.error('You can only upload JPG/PNG file!');
+            message.error(t('You can only upload JPG/PNG file!'));
             return false;
         }
 
         const isLt2M = file.size / 1024 / 1024 < maxImageSize;
 
         if (!isLt2M) {
-            message.error(`Image must smaller than ${maxImageSize}MB!`);
+            message.error(`${t('Image must smaller than ')}${maxImageSize}MB!`);
             return false;
         }
 
@@ -77,7 +79,7 @@ function Setting() {
 
     async function uploadFn(options: RcCustomRequestOptions) {
         const { file, filename } = options;
-        const hide = message.loading('Avatar uploading...', 0);
+        const hide = message.loading(t('Avatar uploading...'), 0);
 
         const formData = new FormData();
         formData.append('userId', id);
@@ -88,26 +90,24 @@ function Setting() {
             const data: UserUploadAvatarRes = result.data;
             const { error, msg, content } = data;
 
-            if(error === 1) {
+            if (error === 1) {
                 message.error(msg);
                 return;
             }
 
-            if(content) {
+            if (content) {
                 const action: Action = actions.userUpdate(content);
                 dispacth(action);
                 hide();
-                message.success('Upload success!');
+                message.success(t('Upload success!'));
             }
         }).catch(err => {
-            message.error('Please check network!');
+            message.error(t('Please check network!'));
             console.log(err);
         })
     }
 
-    function onUploadChange() {
-        console.log('uploading...');
-    }
+    function onUploadChange() { }
 
     return (
         <div className="setting-box" key={id}>
@@ -120,7 +120,7 @@ function Setting() {
                         form={form}
                     >
                         <Form.Item
-                            label="Avatar"
+                            label={t("Avatar")}
                         >
                             <Upload
                                 showUploadList={false}
@@ -142,43 +142,43 @@ function Setting() {
                             </Upload>
                         </Form.Item>
                         <Form.Item
-                            label="Username"
+                            label={t('Username')}
                         >
                             <>{username}</>
                         </Form.Item>
                         <Form.Item
-                            label="Name"
+                            label={t('Name')}
                             name="nickname"
-                            help="Input your name, like's your nickname. Does not change the 'username' used to login."
+                            help={t(`Input your name, like's your nickname. Does not change the 'username' used to login.`)}
                         >
                             <Input
-                                placeholder="Input your name"
+                                placeholder={t('Input your name...')}
                             />
                         </Form.Item>
                         <Form.Item
-                            label="Bio"
+                            label={t('Bio')}
                             name="bio"
-                            help="Input something you like. This will be shown on your home page."
+                            help={t('Input something you like. This will be shown on your home page.')}
                         >
                             <Input.TextArea
-                                placeholder="Input something you like"
+                                placeholder={t('Input something you like...')}
                             />
                         </Form.Item>
                         <Form.Item
-                            label="URL"
+                            label={t('URL')}
                             name="url"
                         >
                             <Input
-                                placeholder="Input your homepage url"
+                                placeholder={t('Input your homepage url...')}
                             />
                         </Form.Item>
                         {
                             position === '管理员' ?
                                 <Form.Item
-                                    label="System"
-                                    help="Manage users and articles."
+                                    label={t('System')}
+                                    help={t('Manage users and articles.')}
                                 >
-                                    <Link to={'/system'}>Background management system</Link>
+                                    <Link to={'/management/home'}>{t('Background management system')}</Link>
                                 </Form.Item>
                                 :
                                 ''
@@ -187,12 +187,12 @@ function Setting() {
                             label=" "
                             colon={false}
                         >
-                            <Button loading={isUpdate} type="primary" onClick={updateProfile}>Update</Button>
+                            <Button loading={isUpdate} type="primary" onClick={updateProfile}>{t('Update')}</Button>
                         </Form.Item>
                     </Form>
                     :
                     <div>
-                        You haven't signed in yet, <Link to={'/login'}>to login</Link>.
+                        {t(`You haven't signed in yet, `)}<Link to={'/login'}>{t('to login')}</Link>.
                     </div>
             }
         </div>

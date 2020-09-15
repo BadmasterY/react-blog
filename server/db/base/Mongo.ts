@@ -1,10 +1,7 @@
 // 链接层
 import mongoose from 'mongoose';
-import config from 'config';
 
-import { DB } from '../../interfaces/config';
-
-const dbConfig: DB = config.get('db');
+import { DB as DBConfig } from '../../config/config';
 // 获取数据库相关配置信息
 // 配置信息位于 config 下
 const {
@@ -20,7 +17,7 @@ const {
     useNewUrlParser,
     useUnifiedTopology,
     poolSize
-} = dbConfig;
+} = DBConfig;
 
 // 替换 mongoose promise
 // mongoose.Promise = global.Promise;
@@ -57,7 +54,7 @@ function getMongoDBUri() {
     // 检查是否配置有 repliceaSet 信息
     // 单个链接时, 无需使用
     // 配置文件仅供测试, 并非最佳实践
-    if (replicaSet.name) {
+    if (replicaSet.name && replicaSet.members) {
         const members = replicaSet.members;
         for (const member of members) {
             const { host, port } = member;
@@ -77,7 +74,7 @@ function getMongoDBUri() {
 /**
  * 链接数据库
  */
-function connectMongoDB(onConectedFn = () => {}) {
+function connectMongoDB(onConectedFn = () => { }) {
     // 创建链接池, 使用 connect 创建
     // 同时由于 mongoose 存在操作缓存, 不需要等待链接成功就可以使用
     // 当然这样也不会造成错误, 因为 mongoose 会等到链接成功时再执行

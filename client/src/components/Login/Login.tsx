@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import { Form, Input, Button, message, Modal } from 'antd';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 import Register from '../Register/Register';
@@ -18,18 +19,21 @@ import './login.css';
 const { useVideo, useBackground, noBackground, randomBackgroundSize } = login;
 const num = Math.floor(Math.random() * randomBackgroundSize);
 let initFormValue: { username?: string, password?: string } = {};
+let isBack = false;
+
+const passRegexp = /^(?=.*[A-Za-z])\w{6,18}$/;
 
 function Login() {
     const localItem = localStorage.getItem(localName);
 
     const { isLogin } = useSelector((state: reduxState) => state.user);
-    const [isBack, setBack] = useState(false);
     const [autoLogin, setAutoLogin] = useState(false);
     const [isLogging, setLoging] = useState(false);
     const [showRegister, setRegister] = useState(false);
     const [form] = Form.useForm();
     const history = useHistory();
     const dispatch = useDispatch();
+    const { t } = useTranslation();
 
     if (localItem !== null) {
         const loginData: LoginData = JSON.parse(localItem);
@@ -45,7 +49,7 @@ function Login() {
 
         if (isLogin && !isBack) {
             history.goBack();
-            setBack(true);
+            isBack = true;
         } else {
             if (localItem !== null) {
                 const loginData: LoginData = JSON.parse(localItem);
@@ -74,8 +78,7 @@ function Login() {
                 }
 
                 setLoging(false);
-                message.success('Login success!');
-                // todo: 加密重新保存, 造成泄漏
+                message.success(t('Login success!'));
                 localStorage.setItem(localName, JSON.stringify({
                     username,
                     password,
@@ -94,7 +97,7 @@ function Login() {
             });
         }).catch(err => {
             setLoging(false);
-            message.error('Please input username and password!');
+            message.error(t('Please input username and password!'));
             console.log(err);
         });
     }
@@ -142,44 +145,56 @@ function Login() {
                 </h2>
                 <Form.Item
                     key="username"
-                    label="Username"
+                    label={t("Username")}
                     name="username"
-                    rules={[{ required: true, message: 'Please input your username!' }]}
+                    rules={[{ required: true, message: t('Please input username!') }]}
                 >
                     <Input
                         autoFocus={true}
                         className="login-input"
                         onPressEnter={login}
-                        placeholder="Input username..."
+                        placeholder={t("Input username...")}
                         autoComplete='off'
                         allowClear={true}
                     />
                 </Form.Item>
                 <Form.Item
                     key="password"
-                    label="Password"
+                    label={t("Password")}
                     name="password"
-                    rules={[{ required: true, message: 'Please input your password!' }]}
+                    rules={[
+                        { required: true, message: t('Please input password!') },
+                        {
+                            type: 'string',
+                            validator(rule, value: string) {
+                                if(passRegexp.test(value)) {
+                                    return Promise.resolve();
+                                }else {
+                                    return Promise.reject(t('The password is 6 to 18 digits long and contains only numbers, letters and underscores!'))
+                                }
+                            }
+                        }
+                    ]}
                 >
                     <Input.Password
                         className="login-input"
                         onPressEnter={login}
-                        placeholder="Input password..."
+                        placeholder={t("Input password...")}
                         autoComplete='off'
                     />
                 </Form.Item>
                 <Button loading={isLogging} block className="login-btn" onClick={login}>{
                     isLogging ?
-                        'Logging...'
+                        t('Logging...')
                         :
-                        'Login'
+                        t('Login')
                 }</Button>
                 <div className="login-register-box">
                     <Button
                         className="login-register"
                         type="link"
                         onClick={showFn}
-                    >register now!</Button>
+                    >{t('register now!')}</Button>
                 </div>
             </Form>
             <Modal

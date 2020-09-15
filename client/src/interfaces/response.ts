@@ -1,7 +1,8 @@
-import { State as CommentState } from './comment';
+import { List as CommentList } from './comment';
+import { OutputData } from '@editorjs/editorjs';
 
 interface BaseResponse {
-    error: number;
+    error: 0 | 1;
     msg?: string;
 }
 
@@ -46,7 +47,7 @@ interface ArticleListItem {
         username: string;
     };
     title: string;
-    content: string;
+    content: OutputData;
     removed: number;
     createTime: string;
     updatedAt: string;
@@ -62,7 +63,7 @@ interface ArticleListResponse extends BaseResponse {
 }
 
 interface ArticleItemContent extends ArticleListItem {
-    comments: CommentState;
+    comments: CommentList[];
 }
 
 interface ArticleResponse extends BaseResponse {
@@ -148,6 +149,20 @@ interface GetGroupListResponse extends BaseResponse {
     }
 }
 
+interface GetArticlesLengthResponse extends BaseResponse {
+    content?: {
+        length: number;
+    }
+}
+
+interface GetCommentsLengthResponse extends GetArticlesLengthResponse {}
+
+interface GetSiteVersionResponse extends BaseResponse {
+    content?: {
+        version: string;
+    }
+}
+
 export type Response = BaseResponse;
 export type UserRes = UserResponse;
 export type UserList = UserListResponse;
@@ -166,3 +181,6 @@ export type GroupItem = GroupsItem;
 export type Groups = GetGroupsResponse;
 export type GroupListContent = GroupListItem;
 export type GroupList = GetGroupListResponse;
+export type ArticleLength = GetArticlesLengthResponse;
+export type CommentLength = GetCommentsLengthResponse;
+export type SiteVersion = GetSiteVersionResponse;

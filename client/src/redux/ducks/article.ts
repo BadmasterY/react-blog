@@ -13,7 +13,7 @@ const initialState: State = {
     _id: '', // key
     authorId: '', // author id
     title: '',
-    content: '',
+    content: { blocks: [] },
     author: {
         url: '',
         bio: '',

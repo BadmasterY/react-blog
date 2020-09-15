@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Row, Col, Button, Input, message, Switch, Form } from 'antd';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 import { system } from '../../../config/default.json';
@@ -33,6 +34,7 @@ function Groups() {
     const [initialPage, setPage] = useState(1);
     const [total, setTotal] = useState(0);
     const [form] = Form.useForm();
+    const { t } = useTranslation();
 
     useEffect(() => {
         if (firstLoad) loadGroups(initialPage, initialPageSize);
@@ -60,7 +62,7 @@ function Groups() {
                             rules={[
                                 {
                                     required: true,
-                                    message: `Please input ${title}!`,
+                                    message: `${t('Please input ')}${t(title)}!`,
                                 }
                             ]}
                         >
@@ -108,7 +110,7 @@ function Groups() {
                 setData(data);
             }
         }).catch(err => {
-            message.error('Please check network!');
+            message.error(t('Please check network!'));
             console.log(err);
         });
     }
@@ -131,7 +133,7 @@ function Groups() {
                 return;
             }
 
-            message.success('Deleted!');
+            message.success(t('Deleted!'));
             const length = dataSource.length;
             const newPage = length === 1 ? initialPage - 1 : initialPage;
             if (newPage <= 0) {
@@ -141,7 +143,7 @@ function Groups() {
             setPage(newPage);
             loadGroups(newPage, initialPageSize);
         }).catch(err => {
-            message.error('Please check network!');
+            message.error(t('Please check network!'));
             console.log(err);
         })
     }
@@ -170,7 +172,7 @@ function Groups() {
                     return;
                 }
 
-                message.success('Added!');
+                message.success(t('Added!'));
 
                 hiddenAdd();
                 form.resetFields();
@@ -178,12 +180,12 @@ function Groups() {
             }).catch(err => {
                 onCancel();
                 console.error(err);
-                message.error('Please check network!');
+                message.error(t('Please check network!'));
             });
         }).catch(err => {
             onCancel();
             console.error(err);
-            message.error('Please check input!');
+            message.error(t('Please check input!'));
         });
     }
 
@@ -192,7 +194,7 @@ function Groups() {
     }
 
     function editFn(record: GroupItem) {
-        form.setFieldsValue({ name: '', useState: 0, ...record });
+        form.setFieldsValue({ ...record });
         setChecked(record.useState ? 1 : 0);
         setEditKey(record.id);
     }
@@ -220,7 +222,7 @@ function Groups() {
                         return;
                     }
 
-                    message.success('Updated!');
+                    message.success(t('Updated!'));
 
                     setData(newData);
                     setUpdating(false);
@@ -229,25 +231,27 @@ function Groups() {
                 }).catch(err => {
                     setUpdating(false);
                     console.error(err);
-                    message.error('Please check network!');
+                    message.error(t('Please check network!'));
                 });
         }).catch(err => {
             setUpdating(false);
             console.error(err);
-            message.error('Please check input!');
+            message.error(t('Please check input!'));
         });
     }
 
     const initialColumns = [
         {
-            ...columns.name,
+            title: t(columns.name.title),
+            dataIndex: columns.name.dataIndex,
             editable: true,
         },
         {
-            ...columns.state,
+            title: t(columns.state.title),
+            dataIndex: columns.state.dataIndex,
             editable: true,
             render: (state: number) => {
-                const showState = state === 0 ? '禁用' : '启用';
+                const showState = state === 0 ? t('Disable') : t('Enable');
                 const color = state === 0 ? '#ed4014' : '#19be6b';
                 return (
                     <span style={{ color }}>{showState}</span>
@@ -255,8 +259,7 @@ function Groups() {
             },
         },
         {
-            title: "Action",
-            dataIndex: "",
+            title: t("Action"),
             key: "action",
             editable: false,
             render: (text: any, record: GroupItem) => {
@@ -272,7 +275,7 @@ function Groups() {
                                     onClick={() => {
                                         updateFn(record.id);
                                     }}
-                                >Update</Button>
+                                >{t('Update')}</Button>
                                 :
                                 <Button
                                     disabled={editKey !== ''}
@@ -280,7 +283,7 @@ function Groups() {
                                     onClick={() => {
                                         editFn(record);
                                     }}
-                                >Edit</Button>
+                                >{t('Edit')}</Button>
                         }
                     </Col>
                     <Col xs={24} sm={12}>
@@ -289,7 +292,7 @@ function Groups() {
                             onClick={() => {
                                 showDeleteFn(record, deleteOkFn);
                             }}
-                        >Delete</Button>
+                        >{t('Delete')}</Button>
                     </Col>
                 </Row>)
             },
@@ -319,12 +322,12 @@ function Groups() {
                     onClick={showAdd}
                     style={{ marginRight: '8px' }}
                 >
-                    Add
+                    {t('Add')}
                 </Button>
                 <Button onClick={() => {
                     setLoadding(true);
                     loadGroups(initialPage, initialPageSize);
-                }}>Refresh</Button>
+                }}>{t('Refresh')}</Button>
             </div>
             <Form form={form} component={false}>
                 <Table
@@ -336,7 +339,7 @@ function Groups() {
                     }}
                     loading={isLoading}
                     pagination={{
-                        position: 'bottomRight',
+                        position: ['bottomRight'],
                         current: initialPage,
                         pageSize: initialPageSize,
                         total,

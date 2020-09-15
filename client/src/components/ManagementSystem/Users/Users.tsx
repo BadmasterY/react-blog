@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, message, Row, Col, Button, Form, Input } from 'antd';
 import { FormInstance } from 'antd/lib/form';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 
 import { UserList, ListContent, UserRes, Response } from '../../../interfaces/response';
@@ -15,19 +16,17 @@ import { md5 } from '../../../utils/md5';
 
 import './users.css';
 
-const INIT_PASSWORD = '123456';
-
 const { initialPageSize, columns } = system;
-const initialData: any[] = [];
 
 function Users() {
-    const [dataSource, setData] = useState(initialData);
+    const [dataSource, setData] = useState<ListContent[]>([]);
     const [total, setTotal] = useState(0);
     const [firstLoad, setFirstLoad] = useState(true);
     const [isLoading, setLoading] = useState(true);
     const [showAddBox, setShowBox] = useState(false);
     const [initialPage, setPage] = useState(1);
     const [form] = Form.useForm();
+    const { t } = useTranslation();
 
     async function loadUserList(page: number, pageSize: number, query = {}) {
         if (firstLoad) setFirstLoad(false);
@@ -58,7 +57,7 @@ function Users() {
             }
         }).catch(err => {
             setLoading(false);
-            message.error('Error! Check network!');
+            message.error(t('Error! Check network!'));
             console.log(err);
         });
     }
@@ -75,17 +74,17 @@ function Users() {
                 return;
             }
 
-            message.success('Deleted!');
+            message.success(t('Deleted!'));
             const length = dataSource.length;
             const newPage = length === 1 ? initialPage - 1 : initialPage;
             if (newPage <= 0) {
-                setData(initialData);
+                setData([]);
                 return;
             }
             setPage(newPage);
             loadUserList(newPage, initialPageSize);
         }).catch(err => {
-            message.error('Error! Check network!');
+            message.error(t('Error! Check network!'));
             console.log(err);
         });
     }
@@ -99,7 +98,7 @@ function Users() {
             });
         }).catch(err => {
             setLoading(false);
-            message.error('Please input something!');
+            message.error(t('Please input something!'));
             console.log(err);
         });
     }
@@ -128,7 +127,7 @@ function Users() {
                 return;
             }
 
-            message.success('Updated!');
+            message.success(t('Updated!'));
             dataSource.map((item) => {
                 if (item === record) {
                     item.useState = newState;
@@ -139,7 +138,7 @@ function Users() {
             setData(Object.assign([], dataSource));
         }).catch(err => {
             setLoading(false);
-            message.error('Please check network!');
+            message.error(t('Please check network!'));
             console.log(err);
         });
     }
@@ -164,8 +163,8 @@ function Users() {
 
     async function addNewUser(form: FormInstance, onEnd = () => { }, onError = () => { }) {
         await form.validateFields().then(async result => {
-            let { name, position } = (result as AddUserForm);
-            let password = md5(INIT_PASSWORD);
+            let { name, pass, position } = (result as AddUserForm);
+            let password = md5(pass);
 
             await axios.post('/user/addUser', {
                 username: name,
@@ -183,18 +182,17 @@ function Users() {
                     return;
                 }
 
-                message.success('Added!');
+                message.success(t('Added!'));
                 hiddenAdd();
-                console.log('ok!');
                 loadUserList(initialPage, initialPageSize);
             }).catch(err => {
                 onError();
                 console.error(err);
-                message.error('Please check network!');
+                message.error(t('Please check network!'));
             });
         }).catch(err => {
             onError();
-            message.error('Please check input!');
+            message.error(t('Please check input!'));
             console.error(err);
         })
     }
@@ -206,8 +204,9 @@ function Users() {
 
     const state = {
         ...columns.state,
+        title: t(columns.state.title),
         render: (state: number) => {
-            const showState = state === 0 ? '禁用' : '启用';
+            const showState = state === 0 ? t('Disable') : t('Enable');
             const color = state === 0 ? '#ed4014' : '#19be6b';
             return (
                 <span style={{ color }}>{showState}</span>
@@ -216,12 +215,21 @@ function Users() {
     }
 
     const initialColumns = [
-        columns.nickname,
-        columns.username,
-        columns.position,
+        {
+            ...columns.nickname,
+            title: t(columns.nickname.title),
+        },
+        {
+            ...columns.username,
+            title: t(columns.username.title),
+        },
+        {
+            ...columns.position,
+            title: t(columns.position.title),
+        },
         state,
         {
-            title: "Action",
+            title: t("Action"),
             key: "action",
             render: (text: ListContent, record: ListContent) => {
                 return (<Row gutter={[6, 6]}>
@@ -232,7 +240,7 @@ function Users() {
                                 changeState(record);
                             }}
                         >{
-                                record.useState === 1 ? 'Forbidden' : 'Enable'
+                                record.useState === 1 ? t('Disable') : t('Enable')
                             }</Button>
                     </Col>
                     <Col xs={24} sm={12}>
@@ -241,7 +249,7 @@ function Users() {
                             onClick={() => {
                                 showDeleteFn(record, deleteOkFn);
                             }}
-                        >Delete</Button>
+                        >{t('Delete')}</Button>
                     </Col>
                 </Row>)
             },
@@ -257,11 +265,11 @@ function Users() {
                 <Row gutter={8}>
                     <Col xs={22} sm={12} md={6}>
                         <Form.Item
-                            label="username"
+                            label={t("username")}
                             name="username"
-                            rules={[{ required: true, message: 'Please input something!' }]}
+                            rules={[{ required: true, message: t('Please input something!') }]}
                         >
-                            <Input placeholder="search by username..." onPressEnter={searchByUsername} />
+                            <Input placeholder={t("search by username...")} onPressEnter={searchByUsername} />
                         </Form.Item>
                     </Col>
                 </Row>
@@ -271,13 +279,13 @@ function Users() {
                             type="primary"
                             onClick={showAdd}
                         >
-                            Add
+                            {t('Add')}
                         </Button>
                         <Button
                             style={{ margin: '0 8px' }}
                             onClick={clearSearch}
                         >
-                            Clear
+                            {t('Clear')}
                         </Button>
                     </Col>
                 </Row>
@@ -286,7 +294,7 @@ function Users() {
                 className="users-table"
                 loading={isLoading}
                 pagination={{
-                    position: 'bottomRight',
+                    position: ['bottomRight'],
                     current: initialPage,
                     pageSize: initialPageSize,
                     total,
@@ -301,7 +309,6 @@ function Users() {
             />
             <Add
                 modalVisible={showAddBox}
-                initpass={INIT_PASSWORD}
                 onClick={addNewUser}
                 onCancel={hiddenAdd}
             />

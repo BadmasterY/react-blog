@@ -1,8 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 
-import { ArticleContent } from '../interfaces/articles';
-
 const dataType = (data: any) => {
 
     let typeStr = Object.prototype.toString.call(data);
@@ -16,12 +14,6 @@ const dataType = (data: any) => {
 const getDate = (date = Date.now()) => {
     return new Date(date).toLocaleString();
 }
-
-// TODO
-// parser the publish json
-const parser = (data: ArticleContent) => {
-
-};
 
 /**
  * 自动创建目录
@@ -63,7 +55,6 @@ const delDirSync = (path: string) => {
 export {
     dataType,
     getDate,
-    parser,
     mkdirsSync,
     delDirSync,
 }

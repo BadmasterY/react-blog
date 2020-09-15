@@ -30,7 +30,7 @@ function About() {
                 <p>逗比和文艺(伪)的渣渣程序员, 喜欢唱、跳 Rap 和篮球。</p>
             </div>
             <div className="about-content">
-                <p>毕业于某二本院校计算机系，{workYear}年前后端开发经验，熟练掌握 JavaScript、TypeScript、Node.js、React、Electron、MongoDB 等语言或技术，具备 Web 全栈独立开发能力。</p>
+                <p>{workYear}年前端开发经验，熟练掌握 JavaScript、TypeScript、React 等语言或技术，具备 Web 全栈独立开发能力。</p>
                 <p>爱好上网、游戏、技术研究，完美主义者，细节控。</p>
             </div>
             <div className="about-links">

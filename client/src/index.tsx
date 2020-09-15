@@ -1,16 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './components/Index/Index';
-import { Provider } from 'react-redux'; // 引入 redux
-import { Router } from 'react-router-dom'; // 引入路由
-import { createBrowserHistory } from 'history'; // 使用 history
+import { Provider } from 'react-redux'; // redux
+import { Router } from 'react-router-dom'; // router
+import { createBrowserHistory } from 'history'; // history
 import * as serviceWorker from './serviceWorker';
 
 import stroe from './redux/store';
 
+import './i18n/i18n';
+
 import './index.css';
 
-const customHistory = createBrowserHistory(); // 创建 history 对象
+const customHistory = createBrowserHistory(); // create history
 
 ReactDOM.render(
   <Provider store={stroe}>
@@ -21,7 +23,4 @@ ReactDOM.render(
   document.getElementById('root')
 );
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+serviceWorker.register();
