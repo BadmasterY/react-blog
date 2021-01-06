@@ -6,7 +6,7 @@
   "dependencies": {
     "animate.css": "^3.7.2",
     "antd": "^4.5.0",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "customize-cra": "^0.9.1",
     "i18next": "^19.6.3",
     "i18next-browser-languagedetector": "^5.0.0",
